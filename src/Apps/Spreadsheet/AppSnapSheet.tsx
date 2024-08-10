@@ -9,7 +9,7 @@ const App: Component = () => {
         [{ formula: 'A2', formulaCachedValue: 'A2' }, { formula: 'B2', formulaCachedValue: 'B2' }]
     ]);
 
-    const [selectedCell, setSelectedCell] = createStore<{ rowIndex: number; colIndex: number }>({rowIndex:0,colIndex:0});
+    const [selectedCell, setSelectedCell] = createStore<{ rowIndex: number; colIndex: number }>({ rowIndex: -1, colIndex: -1 });
 
     const handleFormulaChange = (rowIndex: number, colIndex: number, formula: string) => {
         setData(rowIndex, colIndex, 'formula', formula);
