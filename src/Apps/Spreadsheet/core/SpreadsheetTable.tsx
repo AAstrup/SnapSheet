@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, Component } from 'solid-js';
+import { createSignal, createEffect, Component, For } from 'solid-js';
 import { Spreadsheet, Cell } from './coreTypes';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 
 const SpreadsheetTable: Component<Props> = (props) => {
     const [currentFormula, setCurrentFormula] = createSignal('');
-    const [isEditing, setIsEditing] = createSignal(false);
+    const [isEditing, setIsEditing] = createSignal<{ rowIndex: number; colIndex: number } | null>(null);
 
     // Update the formula bar whenever the selected cell changes
     createEffect(() => {
@@ -53,15 +53,21 @@ const SpreadsheetTable: Component<Props> = (props) => {
                                         <td>
                                             <input
                                                 type="text"
-                                                value={cell.formulaCachedValue ?? ''}
-                                                readOnly={!isEditing()}
+                                                value={
+                                                    isEditing()?.rowIndex === rowIndex() &&
+                                                    isEditing()?.colIndex === colIndex()
+                                                        ? currentFormula()
+                                                        : cell.formulaCachedValue ?? ''
+                                                }
+                                                readOnly={!(isEditing()?.rowIndex === rowIndex() && isEditing()?.colIndex === colIndex())}
                                                 onFocus={() => {
                                                     props.onCellSelect(rowIndex(), colIndex());
-                                                    setIsEditing(true);
+                                                    setIsEditing({ rowIndex: rowIndex(), colIndex: colIndex() });
                                                 }}
                                                 onBlur={() => {
-                                                    setIsEditing(false);
+                                                    setIsEditing(null);
                                                 }}
+                                                onInput={handleFormulaChange}
                                             />
                                         </td>
                                     )}
