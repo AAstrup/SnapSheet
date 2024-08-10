@@ -1,31 +1,27 @@
-import { Component } from 'solid-js';
-import { createStore } from 'solid-js/store';
+import { Component, createSignal } from 'solid-js';
 import SpreadsheetTable from './core/SpreadsheetTable';
 import { Spreadsheet } from './core/coreTypes';
+import { handleFormulaChange, DependencyMap } from './core/formulaUtils';
 
 const App: Component = () => {
-    const [data, setData] = createStore<Spreadsheet>([
-        [{ formula: 'A1', formulaCachedValue: 'A1' }, { formula: 'B1', formulaCachedValue: 'B1' }],
-        [{ formula: 'A2', formulaCachedValue: 'A2' }, { formula: 'B2', formulaCachedValue: 'B2' }]
-    ]);
+    const initialData: Spreadsheet = [
+        [{ formula: '10', formulaCachedValue: 10 }, { formula: '20', formulaCachedValue: 20 }, { formula: '=A1 + B1', formulaCachedValue: 30 }],
+        [{ formula: '5', formulaCachedValue: 5 }, { formula: '=A1 * A2', formulaCachedValue: 50 }, { formula: '=B1 - A2', formulaCachedValue: 15 }],
+        [{ formula: '=C1 + C2', formulaCachedValue: 45 }, { formula: '=A3 / 2', formulaCachedValue: 22.5 }, { formula: '100', formulaCachedValue: 100 }],
+    ];
 
-    const [selectedCell, setSelectedCell] = createStore<{ rowIndex: number; colIndex: number }>({ rowIndex: -1, colIndex: -1 });
-
-    const handleFormulaChange = (rowIndex: number, colIndex: number, formula: string) => {
-        setData(rowIndex, colIndex, 'formula', formula);
-        try {
-            setData(rowIndex, colIndex, 'formulaCachedValue', eval(formula));
-        } catch {
-            setData(rowIndex, colIndex, 'formulaCachedValue', formula);
-        }
-    };
+    const [data, setData] = createSignal<Spreadsheet>(initialData);
+    const [selectedCell, setSelectedCell] = createSignal<{ rowIndex: number; colIndex: number } | null>(null);
+    const dependencyMap: DependencyMap = {};
 
     return (
         <SpreadsheetTable
-            data={data}
-            selectedCell={selectedCell}
-            onCellSelect={(rowIndex, colIndex) => setSelectedCell({ rowIndex, colIndex })}
-            onFormulaChange={handleFormulaChange}
+            data={data()}
+            selectedCell={selectedCell()}
+            onCellSelect={(rowIndex: number, colIndex: number) => setSelectedCell({ rowIndex, colIndex })}
+            onFormulaChange={(rowIndex: number, colIndex: number, formula: string) => 
+                handleFormulaChange(data(), rowIndex, colIndex, formula, setData, dependencyMap)
+            }
         />
     );
 };
