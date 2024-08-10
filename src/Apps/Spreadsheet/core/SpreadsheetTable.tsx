@@ -1,5 +1,5 @@
-import { createSignal, createEffect, Component, For } from 'solid-js';
-import { Spreadsheet, Cell } from './coreTypes';
+import { Component, For, createEffect, createSignal } from 'solid-js';
+import { Spreadsheet } from './coreTypes';
 
 type Props = {
     data: Spreadsheet;
@@ -11,15 +11,11 @@ type Props = {
 const SpreadsheetTable: Component<Props> = (props) => {
     const [currentFormula, setCurrentFormula] = createSignal('');
 
-    // Update the formula bar whenever the selected cell changes
     createEffect(() => {
         if (props.selectedCell) {
             const { rowIndex, colIndex } = props.selectedCell;
             const selectedCell = props.data[rowIndex][colIndex];
-            debugger
             setCurrentFormula(selectedCell.formula);
-        } else {
-            setCurrentFormula('NO FORMULA SELECTED');
         }
     });
 
@@ -54,7 +50,9 @@ const SpreadsheetTable: Component<Props> = (props) => {
                                             <input
                                                 type="text"
                                                 value={cell.formulaCachedValue ?? ''}
-                                                readOnly
+                                                onInput={(e) =>
+                                                    props.onFormulaChange(rowIndex(), colIndex(), e.currentTarget.value)
+                                                }
                                                 onFocus={() => {
                                                     props.onCellSelect(rowIndex(), colIndex());
                                                 }}
