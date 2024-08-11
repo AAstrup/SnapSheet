@@ -47,10 +47,11 @@ export const handleFormulaChange = (
     cellReferences.forEach(cellReference => {
         switch (cellReference.type) {
             case TokenType.CellReference:
-                const { row, col } = getCellReferenceRowColumn(cellReference);
-                const referencedCell = getCell(newData, row, col);
-                referencedCell.cellsDependingOnCell.push({ row, col })
-                updateCell(newData, row, col, referencedCell);
+                const { row: refRow, col: refCol } = getCellReferenceRowColumn(cellReference);
+                const referencedCell = getCell(newData, refRow, refCol);
+                const cellsDependingOnCell = [...referencedCell.cellsDependingOnCell]
+                cellsDependingOnCell.push({ row:rowIndex, col:colIndex })
+                updateCell(newData, refRow, refCol, {...referencedCell, cellsDependingOnCell});
             
                 break;
             
@@ -58,7 +59,7 @@ export const handleFormulaChange = (
                 const referencedCells = getCellRangeReferenceRowsColumns(cellReference);
                 referencedCells.forEach(referencedCellElement => {
                     const referencedCellRef = getCell(newData, referencedCellElement.row, referencedCellElement.col);
-                    updateCell(newData, row, col, referencedCellRef);
+                    updateCell(newData, refRow, refCol, referencedCellRef);
                 });
             
                 break;
