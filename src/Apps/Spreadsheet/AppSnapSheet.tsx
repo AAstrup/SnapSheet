@@ -12,15 +12,6 @@ const App: Component = () => {
 
     const [selectedCell, setSelectedCell] = createStore<{ rowIndex: number; colIndex: number }>({ rowIndex: 0, colIndex: 0 });
 
-    // const handleFormulaChangehandleFormulaChange = (rowIndex: number, colIndex: number, formula: string) => {
-    //     setData(rowIndex, colIndex, 'formula', formula);
-    //     try {
-    //         setData(rowIndex, colIndex, 'formulaCachedValue', eval(formula));
-    //     } catch {
-    //         setData(rowIndex, colIndex, 'formulaCachedValue', formula);
-    //     }
-    // };
-
     return (
         <SpreadsheetTable
             data={data}

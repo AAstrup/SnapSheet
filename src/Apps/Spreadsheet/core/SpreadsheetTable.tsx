@@ -49,10 +49,11 @@ const SpreadsheetTable: Component<Props> = (props) => {
                     props.onCellSelect(rowIndex(), colIndex());
                     setIsEditing({ rowIndex: rowIndex(), colIndex: colIndex() });
                 }}
-                onBlur={() => {
+                onBlur={(e) => {
+                    handleFormulaChange(e); // focus lost workaround
                     setIsEditing(null);
                 }}
-                onInput={handleFormulaChange}
+                // onInput={handleFormulaChange} Input loses focus after key pressed
             />
         </td>);
     }
