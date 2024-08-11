@@ -1,4 +1,4 @@
-import { createSignal, createEffect, Component, For } from 'solid-js';
+import { createSignal, createEffect, Component, For, Accessor } from 'solid-js';
 import { Spreadsheet, Cell } from './coreTypes';
 
 type Props = {
@@ -33,6 +33,30 @@ const SpreadsheetTable: Component<Props> = (props) => {
         }
     };
 
+    function RenderCell(cell: Cell, rowIndex: Accessor<number>, colIndex: Accessor<number>): any 
+    {
+        return (<td>
+            <input
+                type="text"
+                value={
+                    isEditing()?.rowIndex === rowIndex() &&
+                    isEditing()?.colIndex === colIndex()
+                        ? currentFormula()
+                        : cell.formulaCachedValue ?? ''
+                }
+                readOnly={!(isEditing()?.rowIndex === rowIndex() && isEditing()?.colIndex === colIndex())}
+                onFocus={() => {
+                    props.onCellSelect(rowIndex(), colIndex());
+                    setIsEditing({ rowIndex: rowIndex(), colIndex: colIndex() });
+                }}
+                onBlur={() => {
+                    setIsEditing(null);
+                }}
+                onInput={handleFormulaChange}
+            />
+        </td>);
+    }
+
     return (
         <>
             <div>
@@ -49,28 +73,7 @@ const SpreadsheetTable: Component<Props> = (props) => {
                         {(row, rowIndex) => (
                             <tr>
                                 <For each={row}>
-                                    {(cell, colIndex) => (
-                                        <td>
-                                            <input
-                                                type="text"
-                                                value={
-                                                    isEditing()?.rowIndex === rowIndex() &&
-                                                    isEditing()?.colIndex === colIndex()
-                                                        ? currentFormula()
-                                                        : cell.formulaCachedValue ?? ''
-                                                }
-                                                readOnly={!(isEditing()?.rowIndex === rowIndex() && isEditing()?.colIndex === colIndex())}
-                                                onFocus={() => {
-                                                    props.onCellSelect(rowIndex(), colIndex());
-                                                    setIsEditing({ rowIndex: rowIndex(), colIndex: colIndex() });
-                                                }}
-                                                onBlur={() => {
-                                                    setIsEditing(null);
-                                                }}
-                                                onInput={handleFormulaChange}
-                                            />
-                                        </td>
-                                    )}
+                                    {(cell, colIndex) => RenderCell(cell,rowIndex,colIndex) }
                                 </For>
                             </tr>
                         )}
