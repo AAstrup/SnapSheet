@@ -19,6 +19,10 @@ export function getNewSheet(data: Spreadsheet): Spreadsheet {
 );
 }
 
+export function cellWithinBounds(spreadsheet: Spreadsheet, rowIndex: number, colIndex: number): boolean {
+  return spreadsheet.length > rowIndex && spreadsheet[rowIndex].length > colIndex;
+}
+
 export function getCell(spreadsheet: Spreadsheet, rowIndex: number, colIndex: number): Cell {
   return spreadsheet[rowIndex][colIndex];
 }

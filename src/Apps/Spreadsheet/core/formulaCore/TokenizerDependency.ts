@@ -2,7 +2,15 @@ import { tokenize } from "./Tokenizer";
 import { Token, TokenType } from "./TokenTypes";
 
 export function buildDependencyMap(formula: string): Set<Token> {
-    const tokens = tokenize(formula);
+    let tokens : Token[] = []; 
+    try
+    {
+        tokens = tokenize(formula);
+    }
+    catch(e)
+    {
+        return new Set<Token>();
+    }
     const referencedCells = new Set<Token>();
 
     for (const token of tokens) {

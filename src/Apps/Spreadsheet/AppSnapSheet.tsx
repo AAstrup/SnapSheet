@@ -17,7 +17,7 @@ const App: Component = () => {
             data={data}
             selectedCell={selectedCell}
             onCellSelect={(rowIndex, colIndex) => setSelectedCell({ rowIndex, colIndex })}
-            onFormulaChange={(rowIndex: number, colIndex: number, formula: string) => handleFormulaChange(data, rowIndex, colIndex, formula, setData)}
+            onFormulaChange={(rowIndex: number, colIndex: number, formula: string, oldFormula: string) => handleFormulaChange(data, rowIndex, colIndex, formula, oldFormula, setData)}
         />
     );
 };

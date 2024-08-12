@@ -1,10 +1,10 @@
 // formulaUtils.ts
 
-import { Cell, getCell, getNewSheet, Spreadsheet, updateCell } from './coreTypes';
+import { Cell, cellWithinBounds, getCell, getNewSheet, Spreadsheet, updateCell } from './coreTypes';
 import { evaluateExpression, getCellRangeReferenceRowsColumns, getCellReferenceRowColumn } from './formulaCore/TokenEvaluator';
 import { tokenize } from './formulaCore/Tokenizer';
 import { buildDependencyMap } from './formulaCore/TokenizerDependency';
-import { TokenType } from './formulaCore/TokenTypes';
+import { Token, TokenType } from './formulaCore/TokenTypes';
 
 export const recomputeReferences = (cell: Cell, spreadsheet: Spreadsheet) => {
     if (cell.cellsDependingOnCell) {
@@ -23,13 +23,7 @@ export const recomputeReferences = (cell: Cell, spreadsheet: Spreadsheet) => {
 };
 
 
-export const handleFormulaChange = (
-    data: Spreadsheet,
-    rowIndex: number,
-    colIndex: number,
-    formula: string,
-    setData: (data: Spreadsheet) => void
-) => {
+export const handleFormulaChange = (data: Spreadsheet, rowIndex: number, colIndex: number, formula: string, oldFormula: string, setData: (data: Spreadsheet) => void) => {
     var cellReferences = buildDependencyMap(formula)
     var newData = getNewSheet(data);
 
@@ -44,15 +38,43 @@ export const handleFormulaChange = (
     }
     updateCell(newData, rowIndex, colIndex, updatedCell);
 
+    var oldCellReferences = buildDependencyMap(oldFormula)
+    
+    const filteredReferences = new Set<Token>();
+    oldCellReferences.forEach((token) => {
+      if (!cellReferences.has(token)) {
+        filteredReferences.add(token);
+      }
+    });
+
+    updateCellReferences(filteredReferences, newData, rowIndex, colIndex, (referencedCell, refRow, refCol) => {        
+        const cellsDependingOnCell = [...referencedCell.cellsDependingOnCell]
+            .filter(c => !(c.col == colIndex && c.row == rowIndex) )
+
+        updateCell(newData, refRow, refCol, {...referencedCell, cellsDependingOnCell});
+    });
+
+    updateCellReferences(cellReferences, newData, rowIndex, colIndex, (referencedCell, refRow, refCol) => {
+        const cellsDependingOnCell = [...referencedCell.cellsDependingOnCell]
+        cellsDependingOnCell.push({ row:rowIndex, col:colIndex })
+        updateCell(newData, refRow, refCol, {...referencedCell, cellsDependingOnCell});
+    });
+    recomputeReferences(updatedCell, newData);
+
+    setData(newData);
+};
+
+const updateCellReferences = (cellReferences: Set<Token>, newData: Spreadsheet, rowIndex: number, colIndex: number, cellAct: (cell: Cell, refRow: number, refCol: number) => void) =>
+{
     cellReferences.forEach(cellReference => {
         switch (cellReference.type) {
             case TokenType.CellReference:
                 const { row: refRow, col: refCol } = getCellReferenceRowColumn(cellReference);
-                const referencedCell = getCell(newData, refRow, refCol);
-                const cellsDependingOnCell = [...referencedCell.cellsDependingOnCell]
-                cellsDependingOnCell.push({ row:rowIndex, col:colIndex })
-                updateCell(newData, refRow, refCol, {...referencedCell, cellsDependingOnCell});
-            
+                if(cellWithinBounds(newData, refRow, refCol))
+                {
+                    const referencedCell = getCell(newData, refRow, refCol);
+                    cellAct(referencedCell, refRow, refCol);            
+                }
                 break;
             
             case TokenType.CellRange:
@@ -68,7 +90,4 @@ export const handleFormulaChange = (
                 break;
         }
     });
-    recomputeReferences(updatedCell, newData);
-
-    setData(newData);
-};
+}

@@ -5,7 +5,7 @@ type Props = {
     data: Spreadsheet;
     selectedCell: { rowIndex: number; colIndex: number } | null;
     onCellSelect: (rowIndex: number, colIndex: number) => void;
-    onFormulaChange: (rowIndex: number, colIndex: number, formula: string) => void;
+    onFormulaChange: (rowIndex: number, colIndex: number, formula: string, oldFormula: string) => void;
 };
 
 const SpreadsheetTable: Component<Props> = (props) => {
@@ -25,11 +25,12 @@ const SpreadsheetTable: Component<Props> = (props) => {
 
     const handleFormulaChange = (e: Event) => {
         const value = (e.target as HTMLInputElement).value;
+        const oldFormula = currentFormula();
         setCurrentFormula(value);
 
         if (props.selectedCell) {
             const { rowIndex, colIndex } = props.selectedCell;
-            props.onFormulaChange(rowIndex, colIndex, value);
+            props.onFormulaChange(rowIndex, colIndex, value, oldFormula);
         }
     };
 
