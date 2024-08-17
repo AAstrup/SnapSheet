@@ -11,11 +11,25 @@ export function handleKeyPress(event: KeyboardEvent) {
 
     // Ensure we are in TextMode
     if ('cursorPosition' in state.mode) {
-        const cursorPosition = (state.mode as TextMode).cursorPosition;
+        let cursorPosition = (state.mode as TextMode).cursorPosition;
+        const cursorSelectionStartPosition = (state.mode as TextMode).cursorSelectionStartPosition;
         let newFormula = cell.formula;
 
         const moveCursor = (newPosition: number) => {
-            setState("mode", { ...state.mode, cursorPosition: Math.max(0, Math.min(newPosition, newFormula.length)) } as TextMode);
+            cursorPosition = Math.max(0, Math.min(newPosition, newFormula.length));
+            if (event.shiftKey) {
+                setState("mode", { 
+                    ...state.mode, 
+                    cursorPosition: cursorPosition,
+                    cursorSelectionStartPosition: cursorSelectionStartPosition 
+                } as TextMode);
+            } else {
+                setState("mode", { 
+                    ...state.mode, 
+                    cursorPosition: cursorPosition,
+                    cursorSelectionStartPosition: cursorPosition 
+                } as TextMode);
+            }
         };
 
         if (event.key === "ArrowLeft") {
@@ -37,29 +51,39 @@ export function handleKeyPress(event: KeyboardEvent) {
                 moveCursor(cursorPosition + 1);
             }
         } else if (event.key === "Backspace") {
-            if (event.ctrlKey) {
-                // Delete the word before the cursor
-                const lastSpacePosition = newFormula.lastIndexOf(' ', cursorPosition - 1);
-                newFormula = newFormula.slice(0, lastSpacePosition === -1 ? 0 : lastSpacePosition) + newFormula.slice(cursorPosition);
-                moveCursor(lastSpacePosition === -1 ? 0 : lastSpacePosition);
+            if (cursorPosition !== cursorSelectionStartPosition) {
+                // Delete selected text
+                const start = Math.min(cursorPosition, cursorSelectionStartPosition);
+                const end = Math.max(cursorPosition, cursorSelectionStartPosition);
+                newFormula = newFormula.slice(0, start) + newFormula.slice(end);
+                moveCursor(start);
             } else if (cursorPosition > 0) {
                 // Delete the character before the cursor
                 newFormula = newFormula.slice(0, cursorPosition - 1) + newFormula.slice(cursorPosition);
                 moveCursor(cursorPosition - 1);
             }
         } else if (event.key === "Delete") {
-            if (event.ctrlKey) {
-                // Delete the word after the cursor
-                const nextSpacePosition = newFormula.indexOf(' ', cursorPosition);
-                newFormula = newFormula.slice(0, cursorPosition) + newFormula.slice(nextSpacePosition === -1 ? newFormula.length : nextSpacePosition);
+            if (cursorPosition !== cursorSelectionStartPosition) {
+                // Delete selected text
+                const start = Math.min(cursorPosition, cursorSelectionStartPosition);
+                const end = Math.max(cursorPosition, cursorSelectionStartPosition);
+                newFormula = newFormula.slice(0, start) + newFormula.slice(end);
+                moveCursor(start);
             } else if (cursorPosition < newFormula.length) {
                 // Delete the character at the cursor
                 newFormula = newFormula.slice(0, cursorPosition) + newFormula.slice(cursorPosition + 1);
             }
         } else if (event.key.length === 1) {
-            // Insert the new character at the cursor position
-            newFormula = newFormula.slice(0, cursorPosition) + event.key + newFormula.slice(cursorPosition);
-            moveCursor(cursorPosition + 1);
+            // Replace selected text or insert character at cursor position
+            if (cursorPosition !== cursorSelectionStartPosition) {
+                const start = Math.min(cursorPosition, cursorSelectionStartPosition);
+                const end = Math.max(cursorPosition, cursorSelectionStartPosition);
+                newFormula = newFormula.slice(0, start) + event.key + newFormula.slice(end);
+                moveCursor(start + 1);
+            } else {
+                newFormula = newFormula.slice(0, cursorPosition) + event.key + newFormula.slice(cursorPosition);
+                moveCursor(cursorPosition + 1);
+            }
         } else {
             return; // Ignore other keys
         }

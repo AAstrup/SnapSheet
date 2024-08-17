@@ -13,8 +13,16 @@ export const [state, setState] = createStore({
 } as Spreadsheet);
 
 export function selectCell(row: number, col: number): void {
-    setState("selectedCells", [{ row, column:col }]);
-    setState({ ...state, mode: { textMode: true, cursorPosition: 0 } as TextMode});
+    setState("selectedCells", [{ row, column: col }]);
+    const initialCursorPosition = 0;
+    setState({ 
+        ...state, 
+        mode: { 
+            textMode: true, 
+            cursorPosition: initialCursorPosition, 
+            cursorSelectionStartPosition: initialCursorPosition 
+        } as TextMode 
+    });
 }
 
 export function deselectCell(): void {

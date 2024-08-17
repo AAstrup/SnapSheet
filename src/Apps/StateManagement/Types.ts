@@ -18,6 +18,7 @@ export interface CellPosition {
 export interface TextMode {
     textMode: boolean;
     cursorPosition: number;
+    cursorSelectionStartPosition: number;
 }
 
 export interface MarkMode {

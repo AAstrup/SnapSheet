@@ -1,4 +1,4 @@
-import { Component, createSignal, createEffect } from "solid-js";
+import { Component } from "solid-js";
 import { Cell, TextMode } from "../StateManagement/Types";
 import { state } from "../StateManagement/Statemanager";
 import { handleMouseClick } from "../Handlers/MouseHandler";
@@ -37,15 +37,36 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         return width;
     };
 
+    const getSelectedText = () => {
+        const cursorPosition = (state.mode as TextMode).cursorPosition;
+        const cursorSelectionStartPosition = (state.mode as TextMode).cursorSelectionStartPosition;
+        const start = Math.min(cursorPosition, cursorSelectionStartPosition);
+        const end = Math.max(cursorPosition, cursorSelectionStartPosition);
+        return {
+            beforeSelection: props.cell.formula.slice(0, start),
+            selected: props.cell.formula.slice(start, end),
+            afterSelection: props.cell.formula.slice(end)
+        };
+    };
+
     return (
         <div onClick={handleCellClick} class="cell" style="position: relative;">
             {isSelected() && isTextMode() ? (
                 <div class="cell-content" style="position: relative;">
-                    {props.cell.formula}
-                    <span 
-                        class="absolute-cursor" 
-                        style={`left: ${getCursorPosition()}px; position: absolute; top: 0;`}
-                    ></span>
+                    {(() => {
+                        const { beforeSelection, selected, afterSelection } = getSelectedText();
+                        return (
+                            <>
+                                {beforeSelection}
+                                <span class="selected-text">{selected}</span>
+                                <span 
+                                    class="absolute-cursor" 
+                                    style={`left: ${getCursorPosition()}px; position: absolute; top: 0; transform: translateY(0.2em);`}
+                                ></span>
+                                {afterSelection}
+                            </>
+                        );
+                    })()}
                 </div>
             ) : (
                 <div class="bg-green-100">{props.cell.cachedFormulaValue}</div>

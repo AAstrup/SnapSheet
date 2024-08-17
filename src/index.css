@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.selected-text {
+    background-color: rgba(173, 216, 230, 0.5); /* Light blue background for selected text */
+}
+
 .absolute-cursor {
     width: 1px;
     height: 1em;
@@ -13,9 +17,6 @@
 }
 
 @keyframes blink {
-    0%, 100% {
-        opacity: 1;
-    }
     50% {
         opacity: 0;
     }
