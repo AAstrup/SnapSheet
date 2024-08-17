@@ -3,8 +3,8 @@ import { render } from 'solid-js/web'
 import 'solid-devtools'
 
 import './index.css'
-import App from './App'
+import AppSnapSheet from './Apps/Spreadsheet/AppSnapSheet'
 
 const root = document.getElementById('root')
 
-render(() => <App />, root!)
+render(() => <AppSnapSheet />, root!)
