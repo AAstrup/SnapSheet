@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormula } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormula, deselectCell } from "../StateManagement/Statemanager";
 import { TextMode } from "../StateManagement/Types";
 
 export function handleKeyPress(event: KeyboardEvent) {
@@ -62,6 +62,8 @@ export function handleKeyPress(event: KeyboardEvent) {
                 newFormula = newFormula.slice(0, cursorPosition - 1) + newFormula.slice(cursorPosition);
                 moveCursor(cursorPosition - 1);
             }
+        } else if (event.key === "Enter") {
+            deselectCell();
         } else if (event.key === "Delete") {
             if (cursorPosition !== cursorSelectionStartPosition) {
                 // Delete selected text
@@ -88,8 +90,10 @@ export function handleKeyPress(event: KeyboardEvent) {
             return; // Ignore other keys
         }
 
-        // Update the formula in the state
-        setState("cells", row, column, "formula", newFormula);
-        UpdateCellFormula(row, column, newFormula);
+        if(newFormula !== cell.formula) {
+            // Update the formula in the state
+            setState("cells", row, column, "formula", newFormula);
+            UpdateCellFormula(row, column, newFormula);
+        }
     }
 }

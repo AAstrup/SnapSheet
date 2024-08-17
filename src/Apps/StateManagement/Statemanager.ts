@@ -5,8 +5,6 @@ import { EvaluateFormula } from "../Evaluations/Evaluator";
 export const [state, setState] = createStore({
     cells: [
         [{ formula: "1", cachedFormulaValue: "1", cachedDependencies: [] },{ formula: "2", cachedFormulaValue: "2", cachedDependencies: [] }],
-        // [{ formula: "1", cachedFormulaValue: "1", cachedDependencies: [] }, { formula: "2", cachedFormulaValue: "2", cachedDependencies: [] }, { formula: "3", cachedFormulaValue: "3", cachedDependencies: [] }],
-        // [{ formula: "4", cachedFormulaValue: "4", cachedDependencies: [] }, { formula: "5", cachedFormulaValue: "5", cachedDependencies: [] }, { formula: "6", cachedFormulaValue: "6", cachedDependencies: [] }],
       ] as Cell[][],
     mode: { markMode: true } as MarkMode,
     selectedCells: []
