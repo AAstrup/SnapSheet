@@ -3,6 +3,7 @@ import { createStore } from 'solid-js/store';
 import SpreadsheetTable from './core/SpreadsheetTable';
 import { Spreadsheet } from './core/coreTypes';
 import { handleFormulaChange } from './core/formulaUtils';
+import CustomSelectionTest from './core/CustomSelectionTest';
 
 const App: Component = () => {
     const [data, setData] = createStore<Spreadsheet>([
@@ -13,12 +14,15 @@ const App: Component = () => {
     const [selectedCell, setSelectedCell] = createStore<{ rowIndex: number; colIndex: number }>({ rowIndex: 0, colIndex: 0 });
 
     return (
-        <SpreadsheetTable
-            data={data}
-            selectedCell={selectedCell}
-            onCellSelect={(rowIndex, colIndex) => setSelectedCell({ rowIndex, colIndex })}
-            onFormulaChange={(rowIndex: number, colIndex: number, formula: string, oldFormula: string) => handleFormulaChange(data, rowIndex, colIndex, formula, oldFormula, setData)}
-        />
+        <>  
+            <CustomSelectionTest />
+            <SpreadsheetTable
+                data={data}
+                selectedCell={selectedCell}
+                onCellSelect={(rowIndex, colIndex) => setSelectedCell({ rowIndex, colIndex })}
+                onFormulaChange={(rowIndex: number, colIndex: number, formula: string, oldFormula: string) => handleFormulaChange(data, rowIndex, colIndex, formula, oldFormula, setData)}
+            />
+        </>
     );
 };
 
