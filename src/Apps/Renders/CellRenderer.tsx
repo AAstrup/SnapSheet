@@ -10,8 +10,6 @@ interface CellRendererProps {
 }
 
 const CellRenderer: Component<CellRendererProps> = (props) => {
-
-    // Make this part reactive
     const isSelected = () => state.selectedCells.some(
         (cellPosition) => cellPosition.row === props.row && cellPosition.column === props.col
     );
@@ -24,13 +22,33 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         handleMouseClick(props.row, props.col);
     };
 
+    const getCursorPosition = () => {
+        const cursorPosition = (state.mode as TextMode).cursorPosition;
+        const textBeforeCursor = props.cell.formula.slice(0, cursorPosition);
+        // Measure the width of the text before the cursor
+        const span = document.createElement('span');
+        span.style.visibility = 'hidden';
+        span.style.position = 'absolute';
+        span.style.whiteSpace = 'pre'; // Preserve whitespace
+        span.textContent = textBeforeCursor;
+        document.body.appendChild(span);
+        const width = span.getBoundingClientRect().width;
+        document.body.removeChild(span);
+        return width;
+    };
 
     return (
-        <div>
+        <div onClick={handleCellClick} class="cell" style="position: relative;">
             {isSelected() && isTextMode() ? (
-                <div class="bg-green-500">{props.cell.cachedFormulaValue}</div>
+                <div class="cell-content" style="position: relative;">
+                    {props.cell.formula}
+                    <span 
+                        class="absolute-cursor" 
+                        style={`left: ${getCursorPosition()}px; position: absolute; top: 0;`}
+                    ></span>
+                </div>
             ) : (
-                <div class="bg-green-100" onClick={handleCellClick}>{props.cell.cachedFormulaValue}</div>
+                <div class="bg-green-100">{props.cell.cachedFormulaValue}</div>
             )}
         </div>
     );
