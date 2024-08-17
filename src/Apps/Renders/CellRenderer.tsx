@@ -28,17 +28,9 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     return (
         <div>
             {isSelected() && isTextMode() ? (
-                <div>{props.cell.cachedFormulaValue}</div>
-                // <input
-                //     type="text"
-                //     value={inputValue()}
-                //     onInput={handleInputChange}
-                //     onBlur={handleBlur}
-                //     onKeyDown={handleKeyDown}
-                //     autofocus
-                // />
+                <div class="bg-green-500">{props.cell.cachedFormulaValue}</div>
             ) : (
-                <div onClick={handleCellClick}>{props.cell.cachedFormulaValue}</div>
+                <div class="bg-green-100" onClick={handleCellClick}>{props.cell.cachedFormulaValue}</div>
             )}
         </div>
     );
