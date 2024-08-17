@@ -1,5 +1,5 @@
 import { Component, For } from "solid-js";
-import { state } from "../StateManagement/State";
+import { state } from "../StateManagement/Statemanager";
 import CellRenderer from "./CellRenderer";
 
 const SpreadSheetRenderer: Component = () => {
@@ -12,7 +12,7 @@ const SpreadSheetRenderer: Component = () => {
                             <For each={row}>
                                 {(cell, colIndex) => (
                                     <td>
-                                        <CellRenderer cell={cell} />
+                                        <CellRenderer cell={cell} row={rowIndex()} col={colIndex()} />
                                     </td>
                                 )}
                             </For>
