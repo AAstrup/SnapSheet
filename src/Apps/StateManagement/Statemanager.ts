@@ -24,7 +24,6 @@ export function selectCell(row: number, col: number): void {
 }
 
 export function deselectCell(): void {
-    setState("selectedCells", []);
     setState({ ...state, mode: { markMode: true } as MarkMode});
 }
 

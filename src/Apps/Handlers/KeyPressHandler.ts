@@ -1,5 +1,5 @@
 import { state, setState, UpdateCellFormula, deselectCell } from "../StateManagement/Statemanager";
-import { TextMode } from "../StateManagement/Types";
+import { MarkMode, TextMode } from "../StateManagement/Types";
 
 export function handleKeyPress(event: KeyboardEvent) {
     const selectedCell = state.selectedCells[0]; // Assuming a single cell selection
@@ -19,13 +19,13 @@ export function handleKeyPress(event: KeyboardEvent) {
             cursorPosition = Math.max(0, Math.min(newPosition, newFormula.length));
             if (event.shiftKey) {
                 setState("mode", { 
-                    ...state.mode, 
+                    textMode: true, 
                     cursorPosition: cursorPosition,
                     cursorSelectionStartPosition: cursorSelectionStartPosition 
                 } as TextMode);
             } else {
                 setState("mode", { 
-                    ...state.mode, 
+                    textMode: true, 
                     cursorPosition: cursorPosition,
                     cursorSelectionStartPosition: cursorPosition 
                 } as TextMode);
@@ -94,6 +94,15 @@ export function handleKeyPress(event: KeyboardEvent) {
             // Update the formula in the state
             setState("cells", row, column, "formula", newFormula);
             UpdateCellFormula(row, column, newFormula);
+        }
+    }
+    else if('markMode' in state.mode) {
+        if (event.key === "F2") {
+            setState("mode", { 
+                textMode: true, 
+                cursorPosition: 0,
+                cursorSelectionStartPosition: 0 
+            } as TextMode);
         }
     }
 }
