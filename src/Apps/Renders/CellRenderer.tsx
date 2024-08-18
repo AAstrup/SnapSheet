@@ -50,7 +50,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     return (
-        <div onClick={handleCellClick} class="cell" style="position: relative;">
+        <div onMouseDown={handleCellClick} class="cell no-select" style="position: relative;">
             {isSelected() && isTextMode() ? (
                 <div class="cell-content" style="position: relative;">
                     {(() => {

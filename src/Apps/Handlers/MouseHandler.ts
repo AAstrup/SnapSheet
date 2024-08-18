@@ -1,51 +1,104 @@
 // Handlers/MouseHandler.ts
-import { selectCell, setState } from "../StateManagement/Statemanager";
+import { selectCell, setState, state } from "../StateManagement/Statemanager";
 import { TextMode } from "../StateManagement/Types";
+
+let mouseDown = false; // Flag to track if mouse button is pressed
 
 export function handleMouseClick(row: number, col: number, event: MouseEvent): void {
     const cursorPosition = calculateMouseCharPosition(event);
+
     selectCell(row, col);
     setState("mode", { 
         textMode: true, 
         cursorPosition: cursorPosition, 
         cursorSelectionStartPosition: cursorPosition 
     } as TextMode);
+
+    mouseDown = true; // Set the flag to true when mouse button is pressed
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 }
-function calculateMouseCharPosition(event: MouseEvent) : number {
-    const cellElement = event.target as HTMLElement;
-    const cellText = cellElement.textContent || "";
 
-    // Create a temporary span element to measure text width
-    const span = document.createElement('span');
-    span.style.visibility = 'hidden';
-    span.style.position = 'absolute';
-    span.style.whiteSpace = 'pre';
-    document.body.appendChild(span);
+function calculateMouseCharPosition(event: MouseEvent): number {
+    let targetElement = event.target as HTMLElement;
 
+    // Traverse up the DOM tree to find the cell container
+    while (targetElement && !targetElement.classList.contains('cell')) {
+        targetElement = targetElement.parentElement as HTMLElement;
+    }
+
+    if (!targetElement) {
+        return 0; // If no cell container is found, return default cursor position
+    }
+
+    const cellElement = targetElement;
     let cursorPosition = 0;
     let accumulatedWidth = 0;
 
-    for (let i = 0; i < cellText.length; i++) {
-        span.textContent = cellText[i];
-        const charWidth = span.getBoundingClientRect().width;
-        
-        accumulatedWidth += charWidth/2; // only add half size to more easily select to the right of the span
+    // Recursively calculate cursor position by traversing child nodes
+    function traverseNodes(node: ChildNode): boolean {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const textContent = node.textContent || "";
 
-        if (accumulatedWidth >= event.clientX - cellElement.getBoundingClientRect().left) {
-            cursorPosition = i;
-            break;
+            const span = document.createElement('span');
+            span.style.visibility = 'hidden';
+            span.style.position = 'absolute';
+            span.style.whiteSpace = 'pre';
+            document.body.appendChild(span);
+
+            for (let i = 0; i < textContent.length; i++) {
+                span.textContent = textContent[i];
+                const charWidth = span.getBoundingClientRect().width;
+
+                accumulatedWidth += charWidth / 2;
+
+                if (accumulatedWidth >= event.clientX - cellElement.getBoundingClientRect().left) {
+                    cursorPosition += i;
+                    document.body.removeChild(span);
+                    return true; // Stop traversing, position found
+                }
+
+                accumulatedWidth += charWidth / 2;
+            }
+
+            cursorPosition += textContent.length;
+            document.body.removeChild(span);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const childNodes = Array.from(node.childNodes);
+            for (let child of childNodes) {
+                if (traverseNodes(child)) {
+                    return true; // Stop traversing if position found
+                }
+            }
         }
-
-        accumulatedWidth += charWidth/2; // only add half size to more easily select to the right of the span
-
-        // If clicked beyond the text, place the cursor at the end
-        if (i === cellText.length - 1) {
-            cursorPosition = cellText.length;
-        }
+        return false; // Continue traversing
     }
 
-    document.body.removeChild(span);
+    traverseNodes(cellElement);
 
     return cursorPosition;
 }
 
+
+function handleMouseMove(event: MouseEvent): void {
+    if (!mouseDown) return; // Only process mouse move if the mouse button is pressed
+
+    const cursorPosition = calculateMouseCharPosition(event);
+    
+    setState("mode", (prevMode) => {
+        if ("textMode" in prevMode && prevMode.cursorPosition !== cursorPosition) {
+            return { 
+                textMode: true, 
+                cursorPosition: cursorPosition, 
+                cursorSelectionStartPosition: (prevMode as TextMode).cursorSelectionStartPosition 
+            } as TextMode;
+        }
+        return prevMode;
+    });
+}
+
+function handleMouseUp(): void {
+    mouseDown = false; // Reset the flag when the mouse button is released
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+}

@@ -27,3 +27,11 @@
         opacity: 0;
     }
 }
+
+.no-select {
+    user-select: none; /* Disable text selection */
+    -webkit-user-select: none; /* Disable text selection in WebKit-based browsers */
+    -moz-user-select: none; /* Disable text selection in Firefox */
+    -ms-user-select: none; /* Disable text selection in Internet Explorer/Edge */
+    cursor: text;
+}
