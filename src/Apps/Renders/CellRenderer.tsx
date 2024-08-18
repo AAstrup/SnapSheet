@@ -18,8 +18,8 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         return (state.mode as TextMode).textMode !== undefined;
     };
 
-    const handleCellClick = () => {
-        handleMouseClick(props.row, props.col);
+    const handleCellClick = (event: MouseEvent) => {
+        handleMouseClick(props.row, props.col,event);
     };
 
     const getCursorPosition = () => {
