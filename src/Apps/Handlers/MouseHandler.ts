@@ -3,8 +3,23 @@ import { selectCell, setState, state } from "../StateManagement/Statemanager";
 import { TextMode } from "../StateManagement/Types";
 
 let mouseDown = false; // Flag to track if mouse button is pressed
+let lastMouseClick = new Date().getTime();
+const doubleClickTime = 500;
 
-export function handleMouseClick(row: number, col: number, event: MouseEvent): void {
+export function handleMouseClick(row: number, col: number, event: MouseEvent, cachedFormulaValue: string | number): void {
+    let currentTime = new Date().getTime();
+    console.log("currentTime - lastMouseClick", currentTime - lastMouseClick)
+    if(currentTime - lastMouseClick < doubleClickTime)
+        handleMouseDoubleClick(row, col, cachedFormulaValue)
+    else
+        handleMouseSingleClick(row,col, event);
+    lastMouseClick = currentTime;
+    mouseDown = true; // Set the flag to true when mouse button is pressed
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+}
+
+function handleMouseSingleClick(row: number, col: number, event: MouseEvent): void {
     const cursorPosition = calculateMouseCharPosition(event);
 
     selectCell(row, col);
@@ -13,10 +28,20 @@ export function handleMouseClick(row: number, col: number, event: MouseEvent): v
         cursorPosition: cursorPosition, 
         cursorSelectionStartPosition: cursorPosition 
     } as TextMode);
+    console.log("handleMouseClick, cursorPosition", cursorPosition)
+}
 
-    mouseDown = true; // Set the flag to true when mouse button is pressed
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+function handleMouseDoubleClick(row: number, col: number, cachedFormulaValue: string | number): void {
+    const cursorPosition = cachedFormulaValue.toString().length;
+
+    selectCell(row, col);
+    setState("mode", { 
+        textMode: true, 
+        cursorPosition: cachedFormulaValue.toString().length, 
+        cursorSelectionStartPosition: 0 
+    } as TextMode);
+
+    console.log("handleMouseDoubleClick, cursorPosition", cursorPosition)
 }
 
 function calculateMouseCharPosition(event: MouseEvent): number {
@@ -85,6 +110,7 @@ function handleMouseMove(event: MouseEvent): void {
 
     const cursorPosition = calculateMouseCharPosition(event);
     
+    console.log("handleMouseMove, cursorPosition", cursorPosition)
     setState("mode", (prevMode) => {
         if ("textMode" in prevMode && prevMode.cursorPosition !== cursorPosition) {
             return { 

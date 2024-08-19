@@ -19,7 +19,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     const handleCellClick = (event: MouseEvent) => {
-        handleMouseClick(props.row, props.col,event);
+        handleMouseClick(props.row, props.col,event, props.cell.cachedFormulaValue);
     };
 
     const getCursorPosition = () => {
@@ -57,19 +57,19 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
                         const { beforeSelection, selected, afterSelection } = getSelectedText();
                         return (
                             <>
-                                {beforeSelection}
-                                <span class="selected-text">{selected}</span>
+                                <span class="editable-text">{beforeSelection}</span>
+                                <span class="selected-text editable-text">{selected}</span>
                                 <span 
                                     class="absolute-cursor" 
                                     style={`left: ${getCursorPosition()}px; position: absolute; top: 0; transform: translateY(0.2em);`}
                                 ></span>
-                                {afterSelection}
+                                <span class="editable-text">{afterSelection}</span>
                             </>
                         );
                     })()}
                 </div>
             ) : (
-                <div class="bg-green-100">{props.cell.cachedFormulaValue}</div>
+                <div class="cell-content">{props.cell.cachedFormulaValue}</div>
             )}
         </div>
     );

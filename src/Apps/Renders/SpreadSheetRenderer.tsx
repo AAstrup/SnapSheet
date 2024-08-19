@@ -11,7 +11,7 @@ const SpreadSheetRenderer: Component = () => {
                         <tr>
                             <For each={row}>
                                 {(cell, colIndex) => (
-                                    <td>
+                                    <td class="tdcell">
                                         <CellRenderer cell={cell} row={rowIndex()} col={colIndex()} />
                                     </td>
                                 )}

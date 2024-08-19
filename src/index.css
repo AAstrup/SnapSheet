@@ -35,3 +35,27 @@
     -ms-user-select: none; /* Disable text selection in Internet Explorer/Edge */
     cursor: text;
 }
+
+.tdcell{
+    padding: 0px;
+}
+
+.cell {
+    border: 1px;
+    border-style: solid;
+    width: 100px;
+    overflow: auto;
+}
+
+.cell-content{
+    display: flex;
+    flex: 0 0 auto;
+    overflow: hidden;
+    justify-content: flex-start;
+}
+
+.edxitable-tet {
+    flex: auto;
+    display: flex;
+    flex: 0 0 auto;
+}
