@@ -42,6 +42,12 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         const cursorSelectionStartPosition = (state.mode as TextMode).cursorSelectionStartPosition;
         const start = Math.min(cursorPosition, cursorSelectionStartPosition);
         const end = Math.max(cursorPosition, cursorSelectionStartPosition);
+        
+
+        const __beforeSelection = props.cell.formula.slice(0, start);
+        const __selected = props.cell.formula.slice(start, end);
+        const __afterSelection = props.cell.formula.slice(end);
+
         return {
             beforeSelection: props.cell.formula.slice(0, start),
             selected: props.cell.formula.slice(start, end),

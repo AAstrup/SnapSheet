@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .selected-text {
     background-color: rgba(173, 216, 230, 0.5); /* Light blue background for selected text */
 }
@@ -44,8 +45,9 @@
     border: 1px;
     border-style: solid;
     width: 100px;
-    height: 30px;
-    overflow: auto;
+    height: 25px;
+    overflow: hidden;
+    white-space: pre;
 }
 
 .cell-content{
