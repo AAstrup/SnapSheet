@@ -26,7 +26,7 @@ export function handleMouseClick(row: number, col: number, event: MouseEvent, ca
 
 function handleMouseSingleClick(row: number, col: number, event: MouseEvent): void {
     clickCount = 1;
-    const cursorPosition = calculateMouseCharPosition(event);
+    const cursorPosition = calculateMouseCharPosition(event, 12);
 
     selectCell(row, col);
     setState("mode", { 
@@ -38,7 +38,7 @@ function handleMouseSingleClick(row: number, col: number, event: MouseEvent): vo
 
 function handleMouseDoubleClick(row: number, col: number, event: MouseEvent, cachedFormulaValue: string | number): void {
     clickCount = 2;
-    const result = findWordBoundaries(cachedFormulaValue.toString(), calculateMouseCharPosition(event))
+    const result = findWordBoundaries(cachedFormulaValue.toString(), calculateMouseCharPosition(event, 12))
     if(!result)
         return;
 
@@ -52,7 +52,6 @@ function handleMouseDoubleClick(row: number, col: number, event: MouseEvent, cac
 
 function handleMouseTripleClick(row: number, col: number, cachedFormulaValue: string | number): void {
     clickCount = 3;
-    const cursorPosition = cachedFormulaValue.toString().length;
 
     selectCell(row, col);
     setState("mode", { 
@@ -65,7 +64,7 @@ function handleMouseTripleClick(row: number, col: number, cachedFormulaValue: st
 function handleMouseMove(event: MouseEvent): void {
     if (!mouseDown) return; // Only process mouse move if the mouse button is pressed
 
-    const cursorPosition = calculateMouseCharPosition(event);
+    const cursorPosition = calculateMouseCharPosition(event, 12);
     
     setState("mode", (prevMode) => {
         if ("textMode" in prevMode && prevMode.cursorPosition !== cursorPosition) {

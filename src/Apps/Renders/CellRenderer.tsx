@@ -22,7 +22,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         handleMouseClick(props.row, props.col,event, props.cell.cachedFormulaValue);
     };
 
-    const getCursorPosition = () => {
+    const getCursorPosition = (fontSize: number) => {
         const cursorPosition = (state.mode as TextMode).cursorPosition;
         const textBeforeCursor = props.cell.formula.slice(0, cursorPosition);
         // Measure the width of the text before the cursor
@@ -30,6 +30,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         span.style.visibility = 'hidden';
         span.style.position = 'absolute';
         span.style.whiteSpace = 'pre'; // Preserve whitespace
+        span.style.fontSize = `${fontSize}px`;
         span.textContent = textBeforeCursor;
         document.body.appendChild(span);
         const width = span.getBoundingClientRect().width;
@@ -43,11 +44,6 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         const start = Math.min(cursorPosition, cursorSelectionStartPosition);
         const end = Math.max(cursorPosition, cursorSelectionStartPosition);
         
-
-        const __beforeSelection = props.cell.formula.slice(0, start);
-        const __selected = props.cell.formula.slice(start, end);
-        const __afterSelection = props.cell.formula.slice(end);
-
         return {
             beforeSelection: props.cell.formula.slice(0, start),
             selected: props.cell.formula.slice(start, end),
@@ -67,7 +63,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
                                 <span class="selected-text editable-text">{selected}</span>
                                 <span 
                                     class="absolute-cursor" 
-                                    style={`left: ${getCursorPosition()}px; position: absolute; top: 0; transform: translateY(0.2em);`}
+                                    style={`left: ${getCursorPosition(12)}px; position: absolute; top: 0; transform: translateY(0.2em);`}
                                 ></span>
                                 <span class="editable-text">{afterSelection}</span>
                             </>

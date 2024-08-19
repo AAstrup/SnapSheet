@@ -1,4 +1,4 @@
-export function calculateMouseCharPosition(event: MouseEvent): number {
+export function calculateMouseCharPosition(event: MouseEvent, fontSize: number): number {
     let targetElement = event.target as HTMLElement;
 
     // Traverse up the DOM tree to find the cell container
@@ -23,6 +23,7 @@ export function calculateMouseCharPosition(event: MouseEvent): number {
             span.style.visibility = 'hidden';
             span.style.position = 'absolute';
             span.style.whiteSpace = 'pre';
+            span.style.fontSize = `${fontSize}px`;
             document.body.appendChild(span);
 
             for (let i = 0; i < textContent.length; i++) {
