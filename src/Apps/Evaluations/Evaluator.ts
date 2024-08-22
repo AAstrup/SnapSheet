@@ -9,12 +9,12 @@ export interface EvaluateResult {
 
 export const EvaluateFormula = (formula: string, cells: Cell[][]): EvaluateResult => {
     const tokens = Tokenizer.tokenize(formula);
-    const { cachedFormulaValue, dependentCells } = evaluateTokens(tokens, cells);
+    const { cachedFormulaValue, dependentCells } = evaluateTokens(formula, tokens, cells);
 
     return { cachedFormulaValue, dependentCells};
 };
 
-const evaluateTokens = (tokens: Token[], cells: Cell[][]): { cachedFormulaValue: string | number, dependentCells: CellPosition[] } => {
+const evaluateTokens = (formula: string, tokens: Token[], cells: Cell[][]): { cachedFormulaValue: string | number, dependentCells: CellPosition[] } => {
     let expression = '';
     const dependentCells: CellPosition[] = [];
 
@@ -31,7 +31,9 @@ const evaluateTokens = (tokens: Token[], cells: Cell[][]): { cachedFormulaValue:
         } else if (token.type === 'NUMBER' || token.type === 'OPERATOR') {
             expression += token.value;
         } else {
-            throw new Error(`Unknown token type: ${token.type}`);
+            console.log(`Unknown token type: ${token.type}`);
+            return formula;
+            // throw new Error(`Unknown token type: ${token.type}`);
         }
     });
 
@@ -40,7 +42,7 @@ const evaluateTokens = (tokens: Token[], cells: Cell[][]): { cachedFormulaValue:
         return { cachedFormulaValue, dependentCells };
     } catch (error) {
         console.error(`Failed to evaluate expression: ${expression}`, error);
-        return { cachedFormulaValue: `#ERROR`, dependentCells }; // Return an error indicator if evaluation fails
+        return { cachedFormulaValue: `${formula}`, dependentCells }; // Return an error indicator if evaluation fails
     }
 };
 

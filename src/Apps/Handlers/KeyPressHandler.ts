@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormula, deselectCell } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormula, CalculateCellFormula, deselectCell } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 
 export function handleKeyPress(event: KeyboardEvent) {
@@ -63,6 +63,7 @@ export function handleKeyPress(event: KeyboardEvent) {
                 moveCursor(cursorPosition - 1);
             }
         } else if (event.key === "Enter") {
+            CalculateCellFormula(row, column);
             deselectCell();
         } else if (event.key === "Delete") {
             if (cursorPosition !== cursorSelectionStartPosition) {

@@ -29,6 +29,15 @@ export function deselectCell(): void {
 
 export function UpdateCellFormula(row: number, col: number, formula: string): void {
     if (state.cells[row] && state.cells[row][col]) {
+        setState("cells", row, col, { formula } as Cell);
+    } else {
+        console.error("Invalid row or column index");
+    }
+}
+
+export function CalculateCellFormula(row: number, col: number): void {
+    if (state.cells[row] && state.cells[row][col]) {
+        let formula = state.cells[row][col].formula;
         let cachedFormulaValue: string | number;
         if (formula.startsWith('=')) {
             const evaluationResult = EvaluateFormula(formula.slice(1), state.cells); // Slice to remove '='
@@ -37,7 +46,7 @@ export function UpdateCellFormula(row: number, col: number, formula: string): vo
         } else {
             cachedFormulaValue = formula; // Treat as plain text
         }
-        setState("cells", row, col, { formula, cachedFormulaValue, cachedDependencies: state.cells[row][col].cachedDependencies } as Cell);
+        setState("cells", row, col, { cachedFormulaValue, cachedDependencies: state.cells[row][col].cachedDependencies } as Cell);
     } else {
         console.error("Invalid row or column index");
     }
