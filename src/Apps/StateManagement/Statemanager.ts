@@ -11,6 +11,10 @@ export const [state, setState] = createStore({
 } as Spreadsheet);
 
 export function selectCell(row: number, col: number): void {
+    state.selectedCells.forEach(selectedCell => {
+        CalculateCellFormula(selectedCell.row,selectedCell.column);
+    });
+    
     setState("selectedCells", [{ row, column: col }]);
     const initialCursorPosition = 0;
     setState({ 
@@ -24,6 +28,9 @@ export function selectCell(row: number, col: number): void {
 }
 
 export function deselectCell(): void {
+    state.selectedCells.forEach(selectedCell => {
+        CalculateCellFormula(selectedCell.row,selectedCell.column);
+    });
     setState({ ...state, mode: { markMode: true } as MarkMode});
 }
 
@@ -35,7 +42,7 @@ export function UpdateCellFormula(row: number, col: number, formula: string): vo
     }
 }
 
-export function CalculateCellFormula(row: number, col: number): void {
+function CalculateCellFormula(row: number, col: number): void {
     if (state.cells[row] && state.cells[row][col]) {
         let formula = state.cells[row][col].formula;
         let cachedFormulaValue: string | number;
