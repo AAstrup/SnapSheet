@@ -4,14 +4,14 @@ import { Tokenizer, Token } from "./Tokenizer";
 
 export interface EvaluateResult {
     cachedFormulaValue : string | number,
-    dependentCells : CellPosition[]
+    formulaReferencedCells : CellPosition[]
 }
 
 export const EvaluateFormula = (formula: string, cells: Cell[][]): EvaluateResult => {
     const tokens = Tokenizer.tokenize(formula);
     const { cachedFormulaValue, dependentCells } = evaluateTokens(formula, tokens, cells);
 
-    return { cachedFormulaValue, dependentCells};
+    return { cachedFormulaValue, formulaReferencedCells: dependentCells};
 };
 
 const evaluateTokens = (formula: string, tokens: Token[], cells: Cell[][]): { cachedFormulaValue: string | number, dependentCells: CellPosition[] } => {

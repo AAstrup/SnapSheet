@@ -30,6 +30,9 @@ export class Tokenizer {
                 while (position < formula.length && /[a-zA-Z]/.test(formula[position])) {
                     identifier += formula[position++];
                 }
+                while (position < formula.length && /\d/.test(formula[position])) {
+                    identifier += formula[position++];
+                }
                 tokens.push({ type: 'IDENTIFIER', value: identifier });
                 continue;
             }

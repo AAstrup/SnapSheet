@@ -8,6 +8,7 @@ export interface Cell {
     formula: string;
     cachedFormulaValue: string | number,
     cachedDependencies: CellPosition[],
+    cachedFormulaReferencedCells: CellPosition[]
 }
 
 export interface CellPosition {

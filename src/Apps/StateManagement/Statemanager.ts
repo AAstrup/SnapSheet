@@ -4,7 +4,7 @@ import { EvaluateFormula } from "../Evaluations/Evaluator";
 
 export const [state, setState] = createStore({
     cells: [
-        [{ formula: "1", cachedFormulaValue: "1", cachedDependencies: [] },{ formula: "2", cachedFormulaValue: "2", cachedDependencies: [] }],
+        [createCell("1"),createCell("2"), createCell("3")],
       ] as Cell[][],
     mode: { markMode: true } as MarkMode,
     selectedCells: []
@@ -46,14 +46,16 @@ function CalculateCellFormula(row: number, col: number): void {
     if (state.cells[row] && state.cells[row][col]) {
         let formula = state.cells[row][col].formula;
         let cachedFormulaValue: string | number;
+        let cachedFormulaReferencedCells : CellPosition[] = [];
         if (formula.startsWith('=')) {
             const evaluationResult = EvaluateFormula(formula, state.cells); // Slice to remove '='
             cachedFormulaValue = evaluationResult.cachedFormulaValue;
-            UpdateCellDependencies(row, col, evaluationResult.dependentCells);
+            cachedFormulaReferencedCells = evaluationResult.formulaReferencedCells;
+            UpdateCellDependencies(row, col, evaluationResult.formulaReferencedCells);
         } else {
             cachedFormulaValue = formula; // Treat as plain text
         }
-        setState("cells", row, col, { cachedFormulaValue, cachedDependencies: state.cells[row][col].cachedDependencies } as Cell);
+        setState("cells", row, col, { cachedFormulaValue, cachedDependencies: state.cells[row][col].cachedDependencies, cachedFormulaReferencedCells } as Cell);
     } else {
         console.error("Invalid row or column index");
     }
@@ -73,4 +75,8 @@ export function UpdateCellDependencies(row: number, col: number, dependencies: C
             setState("cells", dep.row, dep.column, "cachedDependencies", deps => [...deps, { row, column: col }]);
         }
     });
+}
+
+function createCell(initValue: string): Cell {
+    return { formula: initValue, cachedFormulaValue: initValue, cachedDependencies: [], cachedFormulaReferencedCells: [] };
 }
