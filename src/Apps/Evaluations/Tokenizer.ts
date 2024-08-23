@@ -13,6 +13,7 @@ export class Tokenizer {
             const currentChar = formula[position];
 
             if(currentChar === '='){
+                position++;
                 continue;    
             }
             if (/\d/.test(currentChar)) {
