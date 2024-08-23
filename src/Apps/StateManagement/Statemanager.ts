@@ -47,7 +47,7 @@ function CalculateCellFormula(row: number, col: number): void {
         let formula = state.cells[row][col].formula;
         let cachedFormulaValue: string | number;
         if (formula.startsWith('=')) {
-            const evaluationResult = EvaluateFormula(formula.slice(1), state.cells); // Slice to remove '='
+            const evaluationResult = EvaluateFormula(formula, state.cells); // Slice to remove '='
             cachedFormulaValue = evaluationResult.cachedFormulaValue;
             UpdateCellDependencies(row, col, evaluationResult.dependentCells);
         } else {

@@ -32,7 +32,7 @@ const evaluateTokens = (formula: string, tokens: Token[], cells: Cell[][]): { ca
             expression += token.value;
         } else {
             console.log(`Unknown token type: ${token.type}`);
-            return formula;
+            return token.value;
             // throw new Error(`Unknown token type: ${token.type}`);
         }
     });

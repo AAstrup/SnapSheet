@@ -17,7 +17,7 @@ export function handleKeyPress(event: KeyboardEvent) {
 
         const moveCursor = (newPosition: number) => {
             cursorPosition = Math.max(0, Math.min(newPosition, newFormula.length));
-            if (event.shiftKey) {
+            if (event.shiftKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
                 setState("mode", { 
                     textMode: true, 
                     cursorPosition: cursorPosition,

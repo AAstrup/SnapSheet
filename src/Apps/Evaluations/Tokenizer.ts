@@ -12,6 +12,9 @@ export class Tokenizer {
         while (position < formula.length) {
             const currentChar = formula[position];
 
+            if(currentChar === '='){
+                continue;    
+            }
             if (/\d/.test(currentChar)) {
                 let number = '';
                 while (position < formula.length && /\d/.test(formula[position])) {
