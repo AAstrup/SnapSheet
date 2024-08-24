@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, selectCell } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, selectCell, addColumn, addRow } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
 
@@ -108,11 +108,17 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
         if (event.key === "ArrowUp") {
             moveSelection(Math.max(0, row - 1), column);
         } else if (event.key === "ArrowDown") {
-            moveSelection(Math.min(state.cells.length - 1, row + 1), column);
+            if (row === state.cells.length - 1) {
+                addRow();
+            }
+            moveSelection(row + 1, column);
         } else if (event.key === "ArrowLeft") {
             moveSelection(row, Math.max(0, column - 1));
         } else if (event.key === "ArrowRight") {
-            moveSelection(row, Math.min(state.cells[row].length - 1, column + 1));
+            if (column === state.cells[row].length - 1) {
+                addColumn();
+            }
+            moveSelection(row, column + 1);
         }
     }
     else if(isNonSpecialKey(event))

@@ -18,15 +18,6 @@ export function selectCell(row: number, col: number): void {
     });
     
     setState("selectedCells", [{ row, column: col }]);
-    // const initialCursorPosition = 0;
-    // setState({ 
-    //     ...state, 
-    //     mode: { 
-    //         textMode: true, 
-    //         cursorPosition: initialCursorPosition, 
-    //         cursorSelectionStartPosition: initialCursorPosition 
-    //     } as TextMode 
-    // });
 }
 
 export function deselectCell(): void {
@@ -90,4 +81,15 @@ export function UpdateCellDependencies(row: number, col: number, dependencies: C
 
 function createCell(initValue: string): Cell {
     return { formula: initValue, cachedFormulaValue: initValue, cachedDependencies: [], cachedFormulaReferencedCells: [] };
+}
+
+export function addColumn(): void { 
+    setState("cells", cells =>
+        cells.map(row => [...row, createCell("")]) // Add a new cell to each row
+    );
+}
+
+export function addRow(): void {
+    const newRow = state.cells[0].map(() => createCell("")); // Create a new row with empty cells
+    setState("cells", cells => [...cells, newRow]); // Append the new row to the cells
 }
