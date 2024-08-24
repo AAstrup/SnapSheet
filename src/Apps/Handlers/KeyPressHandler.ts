@@ -8,10 +8,6 @@ export function handleKeyPress(event: KeyboardEvent) {
 
     if (!selectedCell) return; // No cell selected
 
-    const { row, column } = selectedCell;
-    const cell = state.cells[row][column];
-
-    // Ensure we are in TextMode
     if ('textMode' in state.mode) {
         let textMode = (state.mode as TextMode);
         textModeHandleKeyPress(event, textMode);

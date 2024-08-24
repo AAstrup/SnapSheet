@@ -49,7 +49,6 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         const cursorSelectionStartPosition = (state.mode as TextMode).cursorSelectionStartPosition;
         const start = Math.min(cursorPosition, cursorSelectionStartPosition);
         const end = Math.max(cursorPosition, cursorSelectionStartPosition);
-        console.log("getSelectedText. cursorSelectionStartPosition",cursorSelectionStartPosition , "cursorPosition", cursorPosition)
         
         return {
             beforeSelection: props.cell.formula.slice(0, start),
@@ -59,9 +58,9 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     return (
-        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" } ${isSelected() ? "selected-cell" : "" }`} style="position: relative;">
+        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" } ${isSelected() ? "selected-cell" : "" } ${isSelected() && isTextMode() ? "cell-editing" : "" }`} style="position: relative;">
             {isSelected() && isTextMode() ? (
-                <div class="cell-content cell-editing" style="position: relative;">
+                <div class="cell-content" style="position: relative;">
                     {(() => {
                         const { beforeSelection, selected, afterSelection } = getSelectedText();
                         return (

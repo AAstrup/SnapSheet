@@ -24,4 +24,6 @@ export interface TextMode {
 
 export interface MarkMode {
     markMode: boolean;
+    selectCellPosition: CellPosition | undefined;
+    selectCellStartPosition: CellPosition | undefined;
 }

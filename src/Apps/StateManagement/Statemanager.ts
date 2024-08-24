@@ -4,7 +4,9 @@ import { EvaluateFormula } from "../Evaluations/Evaluator";
 
 export const [state, setState] = createStore({
     cells: [
-        [createCell("1"),createCell("2"), createCell("3")],
+        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
+        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
+        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
       ] as Cell[][],
     mode: { markMode: true } as MarkMode,
     selectedCells: []
