@@ -4,10 +4,6 @@ import { markModeHandleKeyPress } from "./MarkModeKeyPressHandler";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
 
 export function handleKeyPress(event: KeyboardEvent) {
-    const selectedCell = state.selectedCells[0]; // Assuming a single cell selection
-
-    if (!selectedCell) return; // No cell selected
-
     if ('textMode' in state.mode) {
         let textMode = (state.mode as TextMode);
         textModeHandleKeyPress(event, textMode);

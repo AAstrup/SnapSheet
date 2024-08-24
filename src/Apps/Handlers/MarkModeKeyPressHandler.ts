@@ -1,5 +1,18 @@
 import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, selectCell } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
+import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
+
+const arrowKeys = ["ArrowUp","ArrowDown", "ArrowLeft", "ArrowRight"]
+function isNonSpecialKey(event: KeyboardEvent): boolean {
+    const specialKeys = [
+        'Backspace', 'Tab', 'Enter', 'Shift', 'Control', 'Alt', 'Pause', 'CapsLock',
+        'Escape', 'Space', 'PageUp', 'PageDown', 'End', 'Home', 'ArrowLeft', 'ArrowUp',
+        'ArrowRight', 'ArrowDown', 'Insert', 'Delete', 'Meta', 'ContextMenu', 'NumLock',
+        'ScrollLock', 'PrintScreen'
+    ];
+
+    return event.key.length === 1 && !specialKeys.includes(event.key);
+}
 
 export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode) {
     const selectedCell = markMode.selectCellPosition || state.selectedCells[0]; // Assuming a single cell selection
@@ -48,16 +61,14 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
             cursorSelectionStartPosition: 0 
         } as TextMode);
     }
-
-    // Delete: Clear the content of the selected cell(s)
-    if (event.key === "Delete") {
+    else if (event.key === "Delete" || event.key === "Backspace") {
         state.selectedCells.forEach(cellPosition => {
             UpdateCellFormulaAndEvaluate(cellPosition.row, cellPosition.column, "");
         });
     }
 
     // CTRL + Arrow keys: Jump to the next non-empty cell in the direction pressed
-    if (event.ctrlKey) {
+    if (arrowKeys.indexOf(event.key) > -1 && event.ctrlKey) {
         const findNextNonEmptyCell = (startRow: number, startColumn: number, rowIncrement: number, colIncrement: number) => {
             let currentRow = startRow;
             let currentColumn = startColumn;
@@ -91,7 +102,7 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
             selectCell(nextCell.row, nextCell.column);
         }
     }
-    else
+    else if(arrowKeys.indexOf(event.key) > -1)
     {
         // Arrow keys: Navigate between cells
         if (event.key === "ArrowUp") {
@@ -103,6 +114,19 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
         } else if (event.key === "ArrowRight") {
             moveSelection(row, Math.min(state.cells[row].length - 1, column + 1));
         }
+    }
+    else if(isNonSpecialKey(event))
+    {
+        const textMode = { 
+            textMode: true, 
+            cursorPosition: 0,
+            cursorSelectionStartPosition: 0 
+        } as TextMode;
+        setState("mode", textMode);
+        textModeHandleKeyPress(event, textMode);
+    }
+    else {
+        event.preventDefault();
     }
 }
 
