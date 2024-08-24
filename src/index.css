@@ -51,6 +51,11 @@
     white-space: pre;
 }
 
+.referenced-cell {
+    /* border-color:blue; */
+    background-color: lightblue;
+}
+
 .cell-content{
     display: flex;
     flex: 0 0 auto;
@@ -63,3 +68,8 @@
     display: flex;
     flex: 0 0 auto;
 }
+
+.cell-editing{
+    background-color: lightgrey;
+}
+

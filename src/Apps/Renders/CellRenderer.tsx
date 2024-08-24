@@ -14,6 +14,12 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
         (cellPosition) => cellPosition.row === props.row && cellPosition.column === props.col
     );
 
+    const isReferenced = () => state.selectedCells.some(
+        (cellPosition) => state.cells[cellPosition.row][cellPosition.column].cachedFormulaReferencedCells.some(
+            (referencedCellPosition) => referencedCellPosition.row === props.row && referencedCellPosition.column === props.col
+        )
+    );
+
     const isTextMode = () => {
         return (state.mode as TextMode).textMode !== undefined;
     };
@@ -53,9 +59,9 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     return (
-        <div onMouseDown={handleCellClick} class="cell no-select" style="position: relative;">
+        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" }`} style="position: relative;">
             {isSelected() && isTextMode() ? (
-                <div class="cell-content" style="position: relative;">
+                <div class="cell-content cell-editing" style="position: relative;">
                     {(() => {
                         const { beforeSelection, selected, afterSelection } = getSelectedText();
                         return (
@@ -71,9 +77,10 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
                         );
                     })()}
                 </div>
-            ) : (
-                <div class="cell-content">{props.cell.cachedFormulaValue}</div>
-            )}
+            ) : 
+                (
+                    <div class="cell-content">{props.cell.cachedFormulaValue}</div>
+                )}
         </div>
     );
 };
