@@ -119,7 +119,6 @@ function getCellsInRange(start: { row: number, column: number }, end: { row: num
             cellsInRange.push({ row, column: col });
         }
     }
-    console.log("getCellsInRange", cellsInRange, cellsInRange.length);
 
     return cellsInRange;
 }
