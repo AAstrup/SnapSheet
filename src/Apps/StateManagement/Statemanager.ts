@@ -16,15 +16,15 @@ export function selectCell(row: number, col: number): void {
     });
     
     setState("selectedCells", [{ row, column: col }]);
-    const initialCursorPosition = 0;
-    setState({ 
-        ...state, 
-        mode: { 
-            textMode: true, 
-            cursorPosition: initialCursorPosition, 
-            cursorSelectionStartPosition: initialCursorPosition 
-        } as TextMode 
-    });
+    // const initialCursorPosition = 0;
+    // setState({ 
+    //     ...state, 
+    //     mode: { 
+    //         textMode: true, 
+    //         cursorPosition: initialCursorPosition, 
+    //         cursorSelectionStartPosition: initialCursorPosition 
+    //     } as TextMode 
+    // });
 }
 
 export function deselectCell(): void {

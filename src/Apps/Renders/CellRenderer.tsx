@@ -59,7 +59,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     return (
-        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" }`} style="position: relative;">
+        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" } ${isSelected() ? "selected-cell" : "" }`} style="position: relative;">
             {isSelected() && isTextMode() ? (
                 <div class="cell-content cell-editing" style="position: relative;">
                     {(() => {

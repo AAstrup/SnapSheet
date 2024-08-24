@@ -56,6 +56,10 @@
     background-color: lightblue;
 }
 
+.selected-cell {
+    background-color: lightgrey;
+}
+
 .cell-content{
     display: flex;
     flex: 0 0 auto;
@@ -70,6 +74,6 @@
 }
 
 .cell-editing{
-    background-color: lightgrey;
+    background-color: grey;
 }
 
