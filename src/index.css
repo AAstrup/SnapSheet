@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    overflow: hidden;
+}
 
 .selected-text {
     background-color: rgba(173, 216, 230, 0.5); /* Light blue background for selected text */
@@ -53,11 +56,16 @@
 
 .referenced-cell {
     /* border-color:blue; */
-    background-color: lightblue;
+    background-color: aliceblue;
+}
+
+.cellrow{
+    display: flex;
+    flex: 0 0 auto;
 }
 
 .selected-cell {
-    background-color: lightgrey;
+    background-color: lightskyblue;
 }
 
 .cell-content{

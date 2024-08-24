@@ -1,22 +1,56 @@
 import { createStore } from "solid-js/store";
 import { Cell, CellPosition, MarkMode, Spreadsheet, TextMode } from "./Types";
 import { EvaluateFormula } from "../Evaluations/Evaluator";
+import { getViewportSize } from "../Renders/ViewPort";
 
 export const [state, setState] = createStore({
-    cells: [
-        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
-        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
-        [createCell("1"),createCell("2"), createCell("3"), createCell("4")],
-      ] as Cell[][],
+    cells: getCells(),
     mode: { markMode: true } as MarkMode,
-    selectedCells: []
+    selectedCells: [],
+    viewPort: {
+        viewPortTopLeftShownCell: { row:0, column:0 },
+        rowsInScreen: getViewportSize().rowsInScreen,
+        columnInScreen: getViewportSize().columnInScreen,
+    }
 } as Spreadsheet);
 
 export function selectCell(row: number, col: number): void {
     state.selectedCells.forEach(selectedCell => {
         EvaluateCellFormula(selectedCell.row,selectedCell.column);
     });
+
+    const view = state.viewPort;
+    const newViewPortTopLeftShownCell = {...view.viewPortTopLeftShownCell}; 
+    const rowsBeforeView = view.viewPortTopLeftShownCell.row - row;
+    const colBeforeView = view.viewPortTopLeftShownCell.column - col;
+    const rowsAfterView = row + 1 - (view.viewPortTopLeftShownCell.row + view.rowsInScreen);
+    const colAfterView = col + 1 - (view.viewPortTopLeftShownCell.column + view.columnInScreen);
+    if(rowsBeforeView > 0)
+    {
+        newViewPortTopLeftShownCell.row -= rowsBeforeView;
+    }
+    else if(rowsAfterView > 0 )
+    {
+        newViewPortTopLeftShownCell.row += rowsAfterView
+    }
+
     
+    if(colBeforeView > 0)
+    {
+        newViewPortTopLeftShownCell.column -= colBeforeView;
+    }
+    else if(colAfterView > 0 )
+    {
+        newViewPortTopLeftShownCell.column += colAfterView;
+    }
+    
+    if(newViewPortTopLeftShownCell.column != view.viewPortTopLeftShownCell.column || newViewPortTopLeftShownCell.row != view.viewPortTopLeftShownCell.row) {
+        console.log("view.viewPortTopLeftShownCell", view.viewPortTopLeftShownCell,"newViewPortTopLeftShownCell",newViewPortTopLeftShownCell)
+        setState("viewPort", {
+            viewPortTopLeftShownCell: newViewPortTopLeftShownCell
+        });
+    }
+
     setState("selectedCells", [{ row, column: col }]);
 }
 
@@ -92,4 +126,18 @@ export function addColumn(): void {
 export function addRow(): void {
     const newRow = state.cells[0].map(() => createCell("")); // Create a new row with empty cells
     setState("cells", cells => [...cells, newRow]); // Append the new row to the cells
+}
+
+function getCells(): Cell[][] {
+    let cells : Cell[][] = [];
+    
+    for (let rowIndex = 0; rowIndex < 100; rowIndex++) {
+        const row = [];
+        for (let colIndex = 0; colIndex < 100; colIndex++) {
+            row.push(createCell(""));
+        }
+        cells.push(row);
+    }
+
+    return cells;
 }

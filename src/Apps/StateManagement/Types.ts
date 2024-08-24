@@ -2,6 +2,13 @@ export interface Spreadsheet {
     cells: Cell[][]; // First array is column, second is row
     selectedCells: CellPosition[];
     mode: TextMode | MarkMode;
+    viewPort: ViewPort;
+}
+
+export interface ViewPort {
+    viewPortTopLeftShownCell: CellPosition;
+    rowsInScreen: number;
+    columnInScreen: number;
 }
 
 export interface Cell {
