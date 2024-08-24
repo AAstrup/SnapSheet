@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormula, deselectCell, selectCell } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormulaNoEvaluate, deselectCell, selectCell, UpdateCellFormulaAndEvaluate } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 
 export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode) {
@@ -27,12 +27,10 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
         } as TextMode);
     }
 
-
-
     // Delete: Clear the content of the selected cell(s)
     if (event.key === "Delete") {
         state.selectedCells.forEach(cellPosition => {
-            UpdateCellFormula(cellPosition.row, cellPosition.column, "");
+            UpdateCellFormulaAndEvaluate(cellPosition.row, cellPosition.column, "");
         });
     }
 

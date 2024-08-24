@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormula, deselectCell } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormulaNoEvaluate, deselectCell } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 
 export function textModeHandleKeyPress(event: KeyboardEvent, textMode: TextMode) {
@@ -91,6 +91,6 @@ export function textModeHandleKeyPress(event: KeyboardEvent, textMode: TextMode)
     if(newFormula !== cell.formula) {
         // Update the formula in the state
         setState("cells", row, column, "formula", newFormula);
-        UpdateCellFormula(row, column, newFormula);
+        UpdateCellFormulaNoEvaluate(row, column, newFormula);
     }
 }
