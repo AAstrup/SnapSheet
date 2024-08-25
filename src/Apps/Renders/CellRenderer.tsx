@@ -58,7 +58,7 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     return (
-        <div onMouseDown={handleCellClick} class={`cell no-select ${isReferenced() ? "referenced-cell" : "" } ${isSelected() ? "selected-cell" : "" } ${isSelected() && isTextMode() ? "cell-editing" : "" }`} style="position: relative;">
+        <div onMouseDown={handleCellClick} class={`cell ${!isReferenced() && !isSelected() ? "w-24 h-24 border-0 border-solid border-gray-600 bg-gray-100" : ""} ${isReferenced() ? "w-24 h-24 border-2 border-dashed border-indigo-600 bg-indigo-100" : "" } ${isSelected() && !isTextMode() ? "w-24 h-24 border-2 border-none border-indigo-600 bg-indigo-100" : "" } ${isSelected() && isTextMode() ? "w-24 h-24 border border-solid border-indigo-600 bg-indigo-100" : "" }`} style="position: relative;">
             {isSelected() && isTextMode() ? (
                 <div class="cell-content" style="position: relative;">
                     {(() => {

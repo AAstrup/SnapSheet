@@ -28,12 +28,14 @@ function handleMouseSingleClick(row: number, col: number, event: MouseEvent): vo
     clickCount = 1;
     const cursorPosition = calculateMouseCharPosition(event, 12);
 
+    if('textMode' in state.mode) {
+        setState("mode", { 
+            textMode: true, 
+            cursorPosition: cursorPosition, 
+            cursorSelectionStartPosition: cursorPosition 
+        } as TextMode);
+    }
     selectCell(row, col);
-    setState("mode", { 
-        textMode: true, 
-        cursorPosition: cursorPosition, 
-        cursorSelectionStartPosition: cursorPosition 
-    } as TextMode);
 }
 
 function handleMouseDoubleClick(row: number, col: number, event: MouseEvent, cachedFormulaValue: string | number): void {

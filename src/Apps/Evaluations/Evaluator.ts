@@ -31,7 +31,6 @@ const evaluateTokens = (formula: string, tokens: Token[], cells: Cell[][]): { ca
         } else if (token.type === 'NUMBER' || token.type === 'OPERATOR') {
             expression += token.value;
         } else {
-            console.log(`Unknown token type: ${token.type}`);
             return token.value;
             // throw new Error(`Unknown token type: ${token.type}`);
         }

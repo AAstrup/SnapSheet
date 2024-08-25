@@ -46,28 +46,18 @@ body {
 
 .cell {
     font-size: 12px;
-    border: 1px;
-    border-style: solid;
     width: 100px;
     height: 1.5em;
     overflow: hidden;
     white-space: pre;
 }
 
-.referenced-cell {
-    /* border-color:blue; */
-    background-color: aliceblue;
-}
-
 .cellrow{
     display: flex;
     flex: 0 0 auto;
+    height: 18px;
+    font-size: 12px;
 }
-
-.selected-cell {
-    background-color: lightskyblue;
-}
-
 .cell-content{
     display: flex;
     flex: 0 0 auto;

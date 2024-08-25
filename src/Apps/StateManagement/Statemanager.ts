@@ -15,10 +15,16 @@ export const [state, setState] = createStore({
 } as Spreadsheet);
 
 export function selectCell(row: number, col: number): void {
-    state.selectedCells.forEach(selectedCell => {
-        EvaluateCellFormula(selectedCell.row,selectedCell.column);
-    });
+    if('textMode' in state.mode)
+    {
+        state.selectedCells.forEach(selectedCell => {
+            EvaluateCellFormula(selectedCell.row,selectedCell.column);
+        });
+    }
+    selectCellNoEvaluate(row, col);
+}
 
+function selectCellNoEvaluate(row: number, col: number): void {
     const view = state.viewPort;
     const newViewPortTopLeftShownCell = {...view.viewPortTopLeftShownCell}; 
     const rowsBeforeView = view.viewPortTopLeftShownCell.row - row;
@@ -45,7 +51,6 @@ export function selectCell(row: number, col: number): void {
     }
     
     if(newViewPortTopLeftShownCell.column != view.viewPortTopLeftShownCell.column || newViewPortTopLeftShownCell.row != view.viewPortTopLeftShownCell.row) {
-        console.log("view.viewPortTopLeftShownCell", view.viewPortTopLeftShownCell,"newViewPortTopLeftShownCell",newViewPortTopLeftShownCell)
         setState("viewPort", {
             viewPortTopLeftShownCell: newViewPortTopLeftShownCell
         });
@@ -92,6 +97,10 @@ function EvaluateCellFormula(row: number, col: number): void {
             cachedFormulaValue = formula; // Treat as plain text
         }
         setState("cells", row, col, { cachedFormulaValue, cachedDependencies: state.cells[row][col].cachedDependencies, cachedFormulaReferencedCells } as Cell);
+
+        state.cells[row][col].cachedDependencies.forEach(dependency => {
+            EvaluateCellFormula(dependency.row, dependency.column);
+        });
     } else {
         console.error("Invalid row or column index");
     }

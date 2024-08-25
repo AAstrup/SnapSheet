@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, selectCell, addColumn, addRow } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, addColumn, addRow, selectCell } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
 
