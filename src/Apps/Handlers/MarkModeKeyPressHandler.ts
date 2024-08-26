@@ -94,16 +94,16 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
 
         if (event.key === "ArrowUp") {
             const nextCell = findNextNonEmptyCell(row, column, -1, 0);
-            selectCell(nextCell.row, nextCell.column);
+            moveSelection(nextCell.row, nextCell.column);
         } else if (event.key === "ArrowDown") {
             const nextCell = findNextNonEmptyCell(row, column, 1, 0);
-            selectCell(nextCell.row, nextCell.column);
+            moveSelection(nextCell.row, nextCell.column);
         } else if (event.key === "ArrowLeft") {
             const nextCell = findNextNonEmptyCell(row, column, 0, -1);
-            selectCell(nextCell.row, nextCell.column);
+            moveSelection(nextCell.row, nextCell.column);
         } else if (event.key === "ArrowRight") {
             const nextCell = findNextNonEmptyCell(row, column, 0, 1);
-            selectCell(nextCell.row, nextCell.column);
+            moveSelection(nextCell.row, nextCell.column);
         }
     }
     else if(arrowKeys.indexOf(event.key) > -1)
