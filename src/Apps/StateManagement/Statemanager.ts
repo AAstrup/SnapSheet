@@ -21,8 +21,15 @@ export function selectCell(row: number, col: number): void {
             EvaluateCellFormula(selectedCell.row,selectedCell.column);
         });
     }
+    else if('markMode' in state.mode)
+    {
+        setState("mode", { 
+            selectCellPosition: { row, column: col }
+        } as MarkMode);
+    }
     updateViewPort(row, col);
     setState("selectedCells", [{ row, column: col }]);
+    console.log("selectCell", state.selectedCells[0], row, col, state.selectedCells.length)
 }
 
 export function updateViewPort(row: number, col: number): void {
