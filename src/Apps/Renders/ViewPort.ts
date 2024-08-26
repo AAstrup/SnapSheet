@@ -9,7 +9,9 @@ export const getViewportSize = () => {
     const viewportWidth = window.innerWidth;
 
     return {
-        rowsInScreen: Math.floor(viewportHeight / rowHeight),
-        columnInScreen: Math.floor(viewportWidth / colWidth) + 1
+        // rowsInScreen: Math.floor(viewportHeight / rowHeight),
+        // columnInScreen: Math.floor(viewportWidth / colWidth) + 1
+        rowsInScreen: 3,
+        columnInScreen: 3 + 1
     }
 };

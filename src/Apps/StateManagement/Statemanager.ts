@@ -21,10 +21,11 @@ export function selectCell(row: number, col: number): void {
             EvaluateCellFormula(selectedCell.row,selectedCell.column);
         });
     }
-    selectCellNoEvaluate(row, col);
+    updateViewPort(row, col);
+    setState("selectedCells", [{ row, column: col }]);
 }
 
-function selectCellNoEvaluate(row: number, col: number): void {
+export function updateViewPort(row: number, col: number): void {
     const view = state.viewPort;
     const newViewPortTopLeftShownCell = {...view.viewPortTopLeftShownCell}; 
     const rowsBeforeView = view.viewPortTopLeftShownCell.row - row;
@@ -55,8 +56,6 @@ function selectCellNoEvaluate(row: number, col: number): void {
             viewPortTopLeftShownCell: newViewPortTopLeftShownCell
         });
     }
-
-    setState("selectedCells", [{ row, column: col }]);
 }
 
 export function deselectCell(): void {

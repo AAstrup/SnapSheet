@@ -1,4 +1,4 @@
-import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, addColumn, addRow, selectCell } from "../StateManagement/Statemanager";
+import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, addColumn, addRow, selectCell, updateViewPort } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
 
@@ -35,6 +35,7 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
     const moveSelection = (newRow: number, newColumn: number) => {
         if (event.shiftKey) {
             // Update selectCellPosition with the new cell
+            updateViewPort(newRow, newColumn);
             setState("mode", {
                 ...markMode, // Preserve other properties in MarkMode
                 selectCellPosition: { row: newRow, column: newColumn }
