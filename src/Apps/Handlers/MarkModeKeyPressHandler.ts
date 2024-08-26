@@ -86,7 +86,10 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
                     }
                 }
             }
-            return { row: startRow, column: startColumn }; // Return the original cell if no non-empty cell is found
+
+            var withinBoundsRow = Math.max(Math.min(currentRow, state.cells.length - 1), 0)
+            var withinBoundsColumn = Math.max(Math.min(currentColumn, state.cells[withinBoundsRow].length - 1), 0)
+            return { row: withinBoundsRow, column: withinBoundsColumn }; 
         };
 
         if (event.key === "ArrowUp") {
