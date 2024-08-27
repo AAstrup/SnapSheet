@@ -1,5 +1,6 @@
 // Evaluator.ts
 import { Cell, CellPosition } from "../StateManagement/Types";
+import { functionCollection as functionCollection } from "./Functions/FunctionCollection";
 import { Tokenizer, Token } from "./Tokenizer";
 
 export interface EvaluateResult {
@@ -30,6 +31,18 @@ const evaluateTokens = (formula: string, tokens: Token[], cells: Cell[][]): { ca
             expression += cellValue;
         } else if (token.type === 'NUMBER' || token.type === 'OPERATOR') {
             expression += token.value;
+        } else if (token.type === 'FUNCTION') {
+            if(token.functionParameters)
+            {
+                var parameterResults = token.functionParameters.map(parameter => evaluateTokens(parameter.functionParameters, parameter.tokens, cells));
+                parameterResults.forEach((d) => d.dependentCells.forEach(dCell => dependentCells.push(dCell)));
+                const cachedFunctionValue = functionCollection[token.value](parameterResults.map(r => r.cachedFormulaValue))
+
+                expression += cachedFunctionValue;
+            }
+            else{
+                console.error(`Failed to evaluate function: `);
+            }
         } else {
             return token.value;
             // throw new Error(`Unknown token type: ${token.type}`);
