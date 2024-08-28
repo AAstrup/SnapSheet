@@ -1,3 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    overflow: hidden;
+}
+
+.selected-text {
+    background-color: rgba(173, 216, 230, 0.5); /* Light blue background for selected text */
+}
+
+.absolute-cursor {
+    width: 1px;
+    height: 1em;
+    background-color: black; /* Cursor color */
+    position: absolute;
+    top: 0;
+    transform: translateY(0.2em); /* Adjust this value as needed */
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+    1% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    99% {
+        opacity: 0;
+    }
+}
+
+.no-select {
+    user-select: none; /* Disable text selection */
+    -webkit-user-select: none; /* Disable text selection in WebKit-based browsers */
+    -moz-user-select: none; /* Disable text selection in Firefox */
+    -ms-user-select: none; /* Disable text selection in Internet Explorer/Edge */
+    cursor: text;
+}
+
+.tdcell{
+    padding: 0px;
+}
+
+.cell {
+    font-size: 12px;
+    width: 100px;
+    height: 1.5em;
+    overflow: hidden;
+    white-space: pre;
+}
+
+.cellrow{
+    display: flex;
+    flex: 0 0 auto;
+    height: 18px;
+    font-size: 12px;
+}
+.cell-content{
+    display: flex;
+    flex: 0 0 auto;
+    overflow: hidden;
+    justify-content: flex-start;
+}
+
+.edxitable-tet {
+    flex: auto;
+    display: flex;
+    flex: 0 0 auto;
+}
+
+.cell-editing{
+    background-color: grey;
+}
+
