@@ -46,7 +46,9 @@ const parseFunction = (tokens: Token[], index: number): [ASTNode, number] => {
             index = nextIndex;
 
             if (tokens[index]?.type === "Comma") {
-                index++;
+                index++; // Skip the comma
+            } else if (tokens[index]?.type !== "RightParenthesis") {
+                throw new Error("Expected comma or right parenthesis in Sum function");
             }
         }
 
@@ -80,6 +82,7 @@ const parseFunction = (tokens: Token[], index: number): [ASTNode, number] => {
 
     throw new Error(`Unexpected token: ${JSON.stringify(token)}`);
 };
+
 
 const parseExpression = (tokens: Token[], index: number): [ASTNode, number] => {
     let [left, nextIndex] = parsePrimary(tokens, index);
