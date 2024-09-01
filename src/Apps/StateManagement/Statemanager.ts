@@ -1,7 +1,7 @@
 import { createStore } from "solid-js/store";
 import { Cell, CellPosition, MarkMode, Spreadsheet, TextMode } from "./Types";
-import { EvaluateFormula } from "../Evaluations/Evaluator";
 import { getViewportSize } from "../Renders/ViewPort";
+import { evaluateFormula } from "../Evaluations/evaluate";
 
 export const [state, setState] = createStore({
     cells: getCells(),
@@ -94,7 +94,7 @@ function EvaluateCellFormula(row: number, col: number): void {
         let cachedFormulaValue: string | number;
         let cachedFormulaReferencedCells : CellPosition[] = [];
         if (formula.startsWith('=')) {
-            const evaluationResult = EvaluateFormula(formula, state.cells); // Slice to remove '='
+            const evaluationResult = evaluateFormula(formula, state.cells); // Slice to remove '='
             cachedFormulaValue = evaluationResult.cachedFormulaValue;
             cachedFormulaReferencedCells = evaluationResult.formulaReferencedCells;
             UpdateCellDependencies(row, col, evaluationResult.formulaReferencedCells);
