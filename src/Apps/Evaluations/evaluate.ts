@@ -1,6 +1,6 @@
 import { Cell, CellPosition } from "../StateManagement/Types";
 import { evaluatorAst } from "./evaluatorAst";
-import { tokenize } from "./lexicalAnalyser";
+import { tokenize } from "./tokenizer";
 import { syntaticAnalyser } from "./syntaticAnalyser";
 
 export type evaluationResult = {
@@ -8,7 +8,8 @@ export type evaluationResult = {
     formulaReferencedCells: CellPosition[];
 }
 
-export const evaluate = (formula: string, cells: Cell[][]): evaluationResult => {
+export const evaluate = (rawFormula: string, cells: Cell[][]): evaluationResult => {
+    const formula = rawFormula.substring(1);
     var tokens = tokenize(formula);
     var ast = syntaticAnalyser(tokens);
     var formulaValue = evaluatorAst(ast, cells);

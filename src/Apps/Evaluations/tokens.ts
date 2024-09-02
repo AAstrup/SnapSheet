@@ -12,10 +12,10 @@ export const LiteralTokenPatterns = {
 };
 
 // Token type for math operators
-export type MathOperatorToken = { type: "MathOperator"; value: "+" | "-" | "*" | "/" };
+export type OperatorToken = { type: "Operator"; value: "+" | "-" | "*" | "/" | ">" | "<" | "=" | "<=" | ">=" };
 
 // Pattern for math operators
-export const MathOperatorPattern = /\+|\-|\*|\//;
+export const MathOperatorPattern = /\+|\-|\*|\/|\>|\<|\=|\<\=|\>\=/;
 
 // Token type for cell references
 export type CellReferenceToken = { type: "CellReference"; value: { row: number; column: number } };
@@ -50,7 +50,7 @@ export const SymbolTokenPatterns = {
 // General token type
 export type Token = 
   | LiteralToken 
-  | MathOperatorToken 
+  | OperatorToken 
   | CellReferenceToken 
   | FunctionToken 
   | SymbolToken;

@@ -24,7 +24,9 @@ export const tokenize = (formula: string): Token[] => {
             return { type: "CellReference", value: { row, column } };
         }
         if (MathOperatorPattern.test(match)) {
-            return { type: "MathOperator", value: match as "+" | "-" | "*" | "/" };
+            return {
+                type: "Operator", value: match as "+" | "-" | "*" | "/" | "<" | "<=" | ">" | ">=" | "="
+            };
         }
         if (FunctionTokenPatterns.Sum.test(match)) {
             return { type: "Sum" };

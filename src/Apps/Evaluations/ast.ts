@@ -1,6 +1,6 @@
 // ast.ts
 import { CellPosition } from "../StateManagement/Types";
-import { MathOperatorToken } from "./tokens";
+import { OperatorToken } from "./tokens";
 
 export type LiteralNode = 
   | { type: "Integer"; value: number }
@@ -12,9 +12,9 @@ export type CellReferenceNode = {
   value: CellPosition;
 };
 
-export type MathExpressionNode = {
-  type: "MathExpression";
-  operator: MathOperatorToken;
+export type ExpressionNode = {
+  type: "Expression";
+  operator: OperatorToken;
   left: ASTNode;
   right: ASTNode;
 };
@@ -23,4 +23,4 @@ export type FunctionNode =
   | { type: "Sum"; arguments: ASTNode[] }
   | { type: "If"; condition: ASTNode; trueBranch: ASTNode; falseBranch: ASTNode };
 
-export type ASTNode = LiteralNode | CellReferenceNode | MathExpressionNode | FunctionNode;
+export type ASTNode = LiteralNode | CellReferenceNode | ExpressionNode | FunctionNode;

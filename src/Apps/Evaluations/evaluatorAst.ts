@@ -11,32 +11,36 @@ export const evaluatorAst = (node: ASTNode, cells: Cell[][]): string | number | 
         case "CellReference":
             return cells[node.value.row][node.value.column].cachedFormulaValue;
 
-        case "MathExpression":
-            const leftValue = asNumber(evaluatorAst(node.left, cells));
-            const rightValue = asNumber(evaluatorAst(node.right, cells));
-            let result: number;
+        case "Expression":
+            const leftValue = evaluatorAst(node.left, cells);
+            const rightValue = evaluatorAst(node.right, cells);
 
             switch (node.operator.value) {
                 case "+":
-                    result = leftValue + rightValue;
-                    break;
+                    return asNumber(leftValue) + asNumber(rightValue);
                 case "-":
-                    result = leftValue - rightValue;
-                    break;
+                    return asNumber(leftValue) - asNumber(rightValue);
                 case "*":
-                    result = leftValue * rightValue;
-                    break;
+                    return asNumber(leftValue) * asNumber(rightValue);
                 case "/":
                     if (rightValue === 0) {
                         throw new Error("Division by zero");
                     }
-                    result = leftValue / rightValue;
-                    break;
+                    return asNumber(leftValue) / asNumber(rightValue);
+                case "<":
+                    return asNumber(leftValue) < asNumber(rightValue);
+                case "<=":
+                    return asNumber(leftValue) <= asNumber(rightValue);
+                case ">":
+                    return asNumber(leftValue) > asNumber(rightValue);
+                case ">=":
+                    return asNumber(leftValue) >= asNumber(rightValue);
+                case "=":
+                    return asNumber(leftValue) === asNumber(rightValue);
+
                 default:
                     throw new Error(`Unknown operator: ${node.operator}`);
             }
-
-            return result.toString();
 
         case "Sum":
             const sumResult = node.arguments
@@ -45,8 +49,9 @@ export const evaluatorAst = (node: ASTNode, cells: Cell[][]): string | number | 
             return sumResult.toString();
 
         case "If":
-            const condition = evaluatorAst(node.condition, cells) === "true";
-            return condition ? evaluatorAst(node.trueBranch, cells) : evaluatorAst(node.falseBranch, cells);
+            const conditionAst = evaluatorAst(node.condition, cells);
+            const conditionTrue = conditionAst === "true" || conditionAst === true;
+            return conditionTrue ? evaluatorAst(node.trueBranch, cells) : evaluatorAst(node.falseBranch, cells);
 
         default:
             throw new Error(`Unknown AST node type: ${node}`);

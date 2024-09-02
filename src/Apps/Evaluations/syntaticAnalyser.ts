@@ -1,5 +1,5 @@
-import { MathOperatorToken, Token } from "./tokens";
-import { ASTNode, LiteralNode, CellReferenceNode, MathExpressionNode, FunctionNode } from "./ast";
+import { OperatorToken, Token } from "./tokens";
+import { ASTNode, LiteralNode, CellReferenceNode, ExpressionNode, FunctionNode } from "./ast";
 
 // Recursive descent parser functions
 
@@ -87,10 +87,10 @@ const parseFunction = (tokens: Token[], index: number): [ASTNode, number] => {
 const parseExpression = (tokens: Token[], index: number): [ASTNode, number] => {
     let [left, nextIndex] = parsePrimary(tokens, index);
 
-    while (tokens[nextIndex]?.type === "MathOperator") {
-        const operator = tokens[nextIndex] as MathOperatorToken;
+    while (tokens[nextIndex]?.type === "Operator") {
+        const operator = tokens[nextIndex] as OperatorToken;
         const [right, nextNextIndex] = parsePrimary(tokens, nextIndex + 1);
-        left = { type: "MathExpression", operator, left, right } as MathExpressionNode;
+        left = { type: "Expression", operator, left, right } as ExpressionNode;
         nextIndex = nextNextIndex;
     }
 
