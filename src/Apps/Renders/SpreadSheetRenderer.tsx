@@ -1,24 +1,26 @@
-import { Component, For, createEffect, createSignal, onMount } from "solid-js";
+import { Component, For, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { state, setState } from "../StateManagement/Statemanager";
 import CellRenderer from "./CellRenderer";
 import { getViewportSize } from "./ViewPort";
-import { TextMode } from "../StateManagement/Types";
+import { Spreadsheet, TextMode } from "../StateManagement/Types";
 
-const SpreadSheetRenderer: Component = () => {
+const SpreadSheetRenderer: Component<Spreadsheet> = () => {
     const updateViewportSize = () => {
         const viewSize = getViewportSize();
         setState("viewPort", {
             rowsInScreen: viewSize.rowsInScreen,
             columnInScreen: viewSize.columnInScreen
-        })
-    }
+        });
+    };
 
     onMount(() => {
         window.addEventListener("resize", updateViewportSize);
+        updateViewportSize(); // Initial call to set the viewport size
+        onCleanup(() => {
+            window.removeEventListener("resize", updateViewportSize);
+        });
     });
 
-
-    // Generate column headers (A, B, C, ...)
     const columnHeaders = () => {
         const startCol = state.viewPort.viewPortTopLeftShownCell.column;
         const endCol = Math.min(state.cells[0]?.length || 0, startCol + state.viewPort.columnInScreen);
@@ -27,15 +29,13 @@ const SpreadSheetRenderer: Component = () => {
         );
     };
 
-    
     createEffect(() => {
-
-    },);
-
-    const isTextMode = () => {
-        return (state.mode as TextMode).textMode !== undefined;
-    };
-
+        // Reacts to changes in the viewport or cells
+        console.log(`Rendering spreadsheet`);
+        const viewport = state.viewPort;
+        const cells = state.cells;
+    });
+    
     return (
         <table>
             <thead>
@@ -58,9 +58,9 @@ const SpreadSheetRenderer: Component = () => {
                                             cell={cell}
                                             row={state.viewPort.viewPortTopLeftShownCell.row + rowIndex()}
                                             col={state.viewPort.viewPortTopLeftShownCell.column + colIndex()}
-                                            isReferenced={state.selectedCells.lookupReferenced(rowIndex(), colIndex())}
-                                            isSelected={state.selectedCells.lookup(rowIndex(), colIndex())}
-                                            isTextMode={isTextMode()}
+                                            cells={state.cells}
+                                            mode={state.mode}
+                                            selectedCells={state.selectedCells}
                                         />
                                     </td>
                                 )}
