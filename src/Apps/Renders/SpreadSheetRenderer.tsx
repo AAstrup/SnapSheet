@@ -2,6 +2,7 @@ import { Component, For, createEffect, createSignal, onMount } from "solid-js";
 import { state, setState } from "../StateManagement/Statemanager";
 import CellRenderer from "./CellRenderer";
 import { getViewportSize } from "./ViewPort";
+import { TextMode } from "../StateManagement/Types";
 
 const SpreadSheetRenderer: Component = () => {
     const updateViewportSize = () => {
@@ -26,6 +27,15 @@ const SpreadSheetRenderer: Component = () => {
         );
     };
 
+    
+    createEffect(() => {
+
+    },);
+
+    const isTextMode = () => {
+        return (state.mode as TextMode).textMode !== undefined;
+    };
+
     return (
         <table>
             <thead>
@@ -48,6 +58,9 @@ const SpreadSheetRenderer: Component = () => {
                                             cell={cell}
                                             row={state.viewPort.viewPortTopLeftShownCell.row + rowIndex()}
                                             col={state.viewPort.viewPortTopLeftShownCell.column + colIndex()}
+                                            isReferenced={state.selectedCells.lookupReferenced(rowIndex(), colIndex())}
+                                            isSelected={state.selectedCells.lookup(rowIndex(), colIndex())}
+                                            isTextMode={isTextMode()}
                                         />
                                     </td>
                                 )}

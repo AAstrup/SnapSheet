@@ -1,6 +1,8 @@
+import { SelectedCells } from "./SelectedCells";
+
 export interface Spreadsheet {
     cells: Cell[][]; // First array is column, second is row
-    selectedCells: CellPosition[];
+    selectedCells: SelectedCells;
     mode: TextMode | MarkMode;
     viewPort: ViewPort;
 }

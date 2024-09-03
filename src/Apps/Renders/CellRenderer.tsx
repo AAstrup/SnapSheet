@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, createEffect } from "solid-js";
 import { Cell, TextMode } from "../StateManagement/Types";
 import { state } from "../StateManagement/Statemanager";
 import { handleMouseClick } from "../Handlers/MouseHandler";
@@ -7,23 +7,14 @@ interface CellRendererProps {
     cell: Cell;
     row: number;
     col: number;
+    isSelected: boolean;
+    isReferenced: boolean;
+    isTextMode: boolean;
 }
 
 const CellRenderer: Component<CellRendererProps> = (props) => {
-    const isSelected = () => state.selectedCells.some(
-        (cellPosition) => cellPosition.row === props.row && cellPosition.column === props.col
-    );
 
-    const isReferenced = () => state.selectedCells.some(
-        (cellPosition) => state.cells[cellPosition.row][cellPosition.column].cachedFormulaReferencedCells.some(
-            (referencedCellPosition) => referencedCellPosition.row === props.row && referencedCellPosition.column === props.col
-        )
-    );
-
-    const isTextMode = () => {
-        return (state.mode as TextMode).textMode !== undefined;
-    };
-
+    
     const handleCellClick = (event: MouseEvent) => {
         handleMouseClick(props.row, props.col,event, props.cell.cachedFormulaValue);
     };
@@ -56,10 +47,12 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
             afterSelection: props.cell.formula.slice(end)
         };
     };
+    createEffect(() => {
 
+    },props.cell);
     return (
-        <div onMouseDown={handleCellClick} class={`cell ${!isReferenced() && !isSelected() ? "w-24 h-24 border-0 border-solid border-gray-600 bg-gray-100" : ""} ${isReferenced() ? "w-24 h-24 border-2 border-dashed border-indigo-600 bg-indigo-100" : "" } ${isSelected() && !isTextMode() ? "w-24 h-24 border-2 border-none border-indigo-600 bg-indigo-100" : "" } ${isSelected() && isTextMode() ? "w-24 h-24 border border-solid border-indigo-600 bg-indigo-100" : "" }`} style="position: relative;">
-            {isSelected() && isTextMode() ? (
+        <div onMouseDown={handleCellClick} class={`cell ${!props.isReferenced && !props.isSelected ? "w-24 h-24 border-0 border-solid border-gray-600 bg-gray-100" : ""} ${props.isReferenced ? "w-24 h-24 border-2 border-dashed border-indigo-600 bg-indigo-100" : "" } ${props.isSelected && !props.isTextMode ? "w-24 h-24 border-2 border-none border-indigo-600 bg-indigo-100" : "" } ${props.isSelected && props.isTextMode ? "w-24 h-24 border border-solid border-indigo-600 bg-indigo-100" : "" }`} style="position: relative;">
+            {props.isSelected && props.isTextMode ? (
                 <div class="cell-content" style="position: relative;">
                     {(() => {
                         const { beforeSelection, selected, afterSelection } = getSelectedText();

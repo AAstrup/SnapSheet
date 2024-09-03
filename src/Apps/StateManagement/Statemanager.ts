@@ -2,11 +2,12 @@ import { createStore } from "solid-js/store";
 import { Cell, CellPosition, MarkMode, Spreadsheet, TextMode } from "./Types";
 import { getViewportSize } from "../Renders/ViewPort";
 import { evaluate } from "../Evaluations/evaluate";
+import { SelectedCells } from "./SelectedCells";
 
 export const [state, setState] = createStore({
     cells: getCells(),
     mode: { markMode: true } as MarkMode,
-    selectedCells: [],
+    selectedCells: new SelectedCells(),
     viewPort: {
         viewPortTopLeftShownCell: { row:0, column:0 },
         rowsInScreen: getViewportSize().rowsInScreen,
@@ -17,9 +18,7 @@ export const [state, setState] = createStore({
 export function selectCell(row: number, col: number): void {
     if('textMode' in state.mode)
     {
-        state.selectedCells.forEach(selectedCell => {
-            EvaluateCellFormula(selectedCell.row,selectedCell.column);
-        });
+        EvaluateSelectedFormulas();
     }
     else if('markMode' in state.mode)
     {
@@ -28,7 +27,10 @@ export function selectCell(row: number, col: number): void {
         } as MarkMode);
     }
     updateViewPort(row, col);
-    setState("selectedCells", [{ row, column: col }]);
+
+    const selectedCells = new SelectedCells;
+    selectedCells.set(row, col);
+    setState("selectedCells", selectedCells);
 }
 
 export function updateViewPort(row: number, col: number): void {
@@ -66,12 +68,12 @@ export function updateViewPort(row: number, col: number): void {
 
 export function deselectCell(): void {
     EvaluateSelectedFormulas();
-    setState({ ...state, mode: { markMode: true } as MarkMode});
+    setState({ ...state,selectedCells: new SelectedCells(), mode: { markMode: true } as MarkMode});
 }
 
 function EvaluateSelectedFormulas() {
-    state.selectedCells.forEach(selectedCell => {
-        EvaluateCellFormula(selectedCell.row, selectedCell.column);
+    state.selectedCells.getAll().forEach(cell => {
+        EvaluateCellFormula(cell.row, cell.column);
     });
 }
 

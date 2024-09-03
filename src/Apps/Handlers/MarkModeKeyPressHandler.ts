@@ -1,3 +1,5 @@
+import { getFirstCell } from "../StateManagement/Helpers";
+import { SelectedCells } from "../StateManagement/SelectedCells";
 import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, addColumn, addRow, selectCell, updateViewPort } from "../StateManagement/Statemanager";
 import { MarkMode, TextMode } from "../StateManagement/Types";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
@@ -15,10 +17,11 @@ function isNonSpecialKey(event: KeyboardEvent): boolean {
 }
 
 export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode) {
-    const selectedCell = markMode.selectCellPosition || state.selectedCells[0]; // Assuming a single cell selection
+    const selectedCell = markMode.selectCellPosition || getFirstCell(state); // Assuming a single cell selection
 
     if (!selectedCell) return; // No cell selected
-    const selectCellStartPosition = markMode.selectCellStartPosition || state.selectedCells[0]; // Assuming a single cell selection
+    const selectCellStartPosition = markMode.selectCellStartPosition || getFirstCell(state); // Assuming a single cell selection
+    if (!selectCellStartPosition) return; // No cell selected
 
     let { row, column } = selectedCell;
 
@@ -42,8 +45,10 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
             });
 
             // Get the range of cells and update selectedCells
-            const newSelection = getCellsInRange(selectCellStartPosition, { row: newRow, column: newColumn });
-            setState("selectedCells", newSelection);
+            const selectedCells = new SelectedCells;
+            getCellsInRange(selectCellStartPosition, { row: newRow, column: newColumn }).forEach(val => selectedCells.set(val.row, val.column));
+            
+            setState("selectedCells", selectedCells);
         } else {
             // Select only the new cell and update both start and current positions
             selectCell(newRow, newColumn);
@@ -63,8 +68,8 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
         } as TextMode);
     }
     else if (event.key === "Delete" || event.key === "Backspace") {
-        state.selectedCells.forEach(cellPosition => {
-            UpdateCellFormulaAndEvaluate(cellPosition.row, cellPosition.column, "");
+        state.selectedCells.getAll().forEach(cell => {
+            UpdateCellFormulaAndEvaluate(cell.row, cell.column, "");
         });
     }
 

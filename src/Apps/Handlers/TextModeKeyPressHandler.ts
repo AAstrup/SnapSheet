@@ -1,12 +1,12 @@
+import { getFirstCell } from "../StateManagement/Helpers";
 import { state, setState, UpdateCellFormulaNoEvaluate, deselectCell } from "../StateManagement/Statemanager";
-import { MarkMode, TextMode } from "../StateManagement/Types";
+import { Cell, MarkMode, Spreadsheet, TextMode } from "../StateManagement/Types";
 
 export function textModeHandleKeyPress(event: KeyboardEvent, textMode: TextMode) {
-    const selectedCell = state.selectedCells[0]; // Assuming a single cell selection
-
-    if (!selectedCell) return; // No cell selected
-
-    const { row, column } = selectedCell;
+    const firstCell = getFirstCell(state);
+    if (firstCell === null) return; // No cell selected
+    const row = firstCell.row;
+    const column = firstCell.column;
     const cell = state.cells[row][column];
 
     let cursorPosition = textMode.cursorPosition;
@@ -94,3 +94,5 @@ export function textModeHandleKeyPress(event: KeyboardEvent, textMode: TextMode)
         UpdateCellFormulaNoEvaluate(row, column, newFormula);
     }
 }
+
+
