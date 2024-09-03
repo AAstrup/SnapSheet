@@ -29,13 +29,6 @@ const SpreadSheetRenderer: Component<Spreadsheet> = () => {
         );
     };
 
-    createEffect(() => {
-        // Reacts to changes in the viewport or cells
-        console.log(`Rendering spreadsheet`);
-        const viewport = state.viewPort;
-        const cells = state.cells;
-    });
-    
     return (
         <table>
             <thead>
@@ -61,6 +54,7 @@ const SpreadSheetRenderer: Component<Spreadsheet> = () => {
                                             cells={state.cells}
                                             mode={state.mode}
                                             selectedCells={state.selectedCells}
+                                            referencedCells={state.referencedCells}
                                         />
                                     </td>
                                 )}

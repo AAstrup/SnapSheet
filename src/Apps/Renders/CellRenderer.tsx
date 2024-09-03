@@ -1,14 +1,14 @@
 import { Component, createEffect, createSignal } from "solid-js";
-import { Cell, MarkMode, TextMode } from "../StateManagement/Types";
+import { Cell, getCellPositionKey, getKeyCellPosition, MarkMode, ReferencedCells, SelectedCells, TextMode } from "../StateManagement/Types";
 import { state } from "../StateManagement/Statemanager";
 import { handleMouseClick } from "../Handlers/MouseHandler";
-import { SelectedCells } from "../StateManagement/SelectedCells";
 
 interface CellRendererProps {
     cell: Cell;
     row: number;
     col: number;
-    selectedCells: SelectedCells;
+    selectedCells: SelectedCells
+    referencedCells: ReferencedCells
     mode: MarkMode | TextMode,
     cells: Cell[][],
 }
@@ -17,25 +17,28 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     const [cell, setCell] = createSignal(props.cell);
     const [isReferenced, setIsReferenced] = createSignal(false);
     const [isSelected, setIsSelected] = createSignal(false);
+    const [textMode, setTextMode] = createSignal<TextMode|undefined>(undefined);
     const [isTextMode, setIsTextMode] = createSignal(false);
 
     createEffect(() => {
         // This will ensure reactivity
         console.log(`Rendering cell at row ${props.row}, col ${props.col}`);
         // React to specific cell changes
-        setIsReferenced(props.selectedCells.lookupReferenced(props.row, props.col));
-        setIsSelected(props.selectedCells.lookup(props.row, props.col));
+        const positionsAsKey = getCellPositionKey(props.row, props.col);
+        setIsSelected(props.selectedCells[positionsAsKey]);
+        setIsReferenced(props.referencedCells[positionsAsKey]);
+        setTextMode(props.mode as TextMode);
         setIsTextMode((props.mode as TextMode).textMode !== undefined);
         setCell(props.cells[props.row][props.col]);
     });
 
     const handleCellClick = (event: MouseEvent) => {
-        handleMouseClick(props.row, props.col, event, props.cell.cachedFormulaValue);
+        handleMouseClick(props.row, props.col, event, cell().cachedFormulaValue);
     };
 
     const getCursorPosition = (fontSize: number) => {
-        const cursorPosition = (state.mode as TextMode).cursorPosition;
-        const textBeforeCursor = props.cell.formula.slice(0, cursorPosition);
+        const cursorPosition = textMode()!.cursorPosition;
+        const textBeforeCursor = cell().formula.slice(0, cursorPosition);
         const span = document.createElement('span');
         span.style.visibility = 'hidden';
         span.style.position = 'absolute';
@@ -49,15 +52,15 @@ const CellRenderer: Component<CellRendererProps> = (props) => {
     };
 
     const getSelectedText = () => {
-        const cursorPosition = (state.mode as TextMode).cursorPosition;
-        const cursorSelectionStartPosition = (state.mode as TextMode).cursorSelectionStartPosition;
+        const cursorPosition = textMode()!.cursorPosition;
+        const cursorSelectionStartPosition = textMode()!.cursorSelectionStartPosition;
         const start = Math.min(cursorPosition, cursorSelectionStartPosition);
         const end = Math.max(cursorPosition, cursorSelectionStartPosition);
         
         return {
-            beforeSelection: props.cell.formula.slice(0, start),
-            selected: props.cell.formula.slice(start, end),
-            afterSelection: props.cell.formula.slice(end)
+            beforeSelection: cell().formula.slice(0, start),
+            selected: cell().formula.slice(start, end),
+            afterSelection: cell().formula.slice(end)
         };
     };
 

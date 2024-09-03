@@ -1,4 +1,4 @@
-import { Cell, Spreadsheet } from "./Types";
+import { Cell, getKeyCellPosition, Spreadsheet } from "./Types";
 
 export interface firstCell{
     cell: Cell,
@@ -7,8 +7,12 @@ export interface firstCell{
 }
 
 export const getFirstCell = (state: Spreadsheet): firstCell | null => {
-    state.selectedCells.getAll().forEach(cell => {
-        return state.cells[cell.row][cell.column];
+    debugger
+    let cell : Cell | null = null;
+    Object.keys(state.selectedCells).forEach(cellKey => {
+        const cellPosition = getKeyCellPosition(cellKey);
+        cell = state.cells[cellPosition.row][cellPosition.column];
+        return;
     });
-    return null;
+    return cell;
 }

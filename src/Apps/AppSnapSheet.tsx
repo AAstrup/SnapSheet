@@ -10,7 +10,7 @@ const App: Component = () => {
     
     return (
         <>  
-            <SpreadSheetRenderer cells={state.cells} viewPort={state.viewPort} selectedCells={state.selectedCells} mode={state.mode} />
+            <SpreadSheetRenderer cells={state.cells} viewPort={state.viewPort} selectedCells={state.selectedCells} mode={state.mode} referencedCells={state.referencedCells}/>
         </>
     );
 };

@@ -1,7 +1,6 @@
 import { getFirstCell } from "../StateManagement/Helpers";
-import { SelectedCells } from "../StateManagement/SelectedCells";
 import { state, setState, UpdateCellFormulaAndEvaluate, deselectCell, addColumn, addRow, selectCell, updateViewPort } from "../StateManagement/Statemanager";
-import { MarkMode, TextMode } from "../StateManagement/Types";
+import { getCellPositionKey, getKeyCellPosition, MarkMode, SelectedCells, TextMode } from "../StateManagement/Types";
 import { textModeHandleKeyPress } from "./TextModeKeyPressHandler";
 
 const arrowKeys = ["ArrowUp","ArrowDown", "ArrowLeft", "ArrowRight"]
@@ -17,6 +16,7 @@ function isNonSpecialKey(event: KeyboardEvent): boolean {
 }
 
 export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode) {
+    debugger
     const selectedCell = markMode.selectCellPosition || getFirstCell(state); // Assuming a single cell selection
 
     if (!selectedCell) return; // No cell selected
@@ -45,8 +45,14 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
             });
 
             // Get the range of cells and update selectedCells
-            const selectedCells = new SelectedCells;
-            getCellsInRange(selectCellStartPosition, { row: newRow, column: newColumn }).forEach(val => selectedCells.set(val.row, val.column));
+            const selectedCells : SelectedCells = {};
+            getCellsInRange(selectCellStartPosition, { row: newRow, column: newColumn })
+                .forEach(val => {
+                    const positionKey = getCellPositionKey(val.row, val.column);
+                    if(!selectedCells[positionKey]){
+                        selectedCells[positionKey] = true
+                    }
+                });
             
             setState("selectedCells", selectedCells);
         } else {
@@ -68,8 +74,9 @@ export function markModeHandleKeyPress(event: KeyboardEvent, markMode: MarkMode)
         } as TextMode);
     }
     else if (event.key === "Delete" || event.key === "Backspace") {
-        state.selectedCells.getAll().forEach(cell => {
-            UpdateCellFormulaAndEvaluate(cell.row, cell.column, "");
+        Object.keys(state.selectedCells).forEach(cellKey => {
+            const cellPosition = getKeyCellPosition(cellKey);
+            UpdateCellFormulaAndEvaluate(cellPosition.row, cellPosition.column, "");
         });
     }
 

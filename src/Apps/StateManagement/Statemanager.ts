@@ -1,13 +1,13 @@
 import { createStore } from "solid-js/store";
-import { Cell, CellPosition, MarkMode, Spreadsheet, TextMode } from "./Types";
+import { Cell, CellPosition, getCellPositionKey, getKeyCellPosition, MarkMode, SelectedCells, Spreadsheet, TextMode } from "./Types";
 import { getViewportSize } from "../Renders/ViewPort";
 import { evaluate } from "../Evaluations/evaluate";
-import { SelectedCells } from "./SelectedCells";
 
 export const [state, setState] = createStore({
     cells: getCells(),
     mode: { markMode: true } as MarkMode,
-    selectedCells: new SelectedCells(),
+    selectedCells: {},
+    referencedCells: {},
     viewPort: {
         viewPortTopLeftShownCell: { row:0, column:0 },
         rowsInScreen: getViewportSize().rowsInScreen,
@@ -28,9 +28,17 @@ export function selectCell(row: number, col: number): void {
     }
     updateViewPort(row, col);
 
-    const selectedCells = new SelectedCells;
-    selectedCells.set(row, col);
-    setState("selectedCells", selectedCells);
+    const selectedCells : SelectedCells = { };
+    Object.keys(state.selectedCells).forEach(positionKey=> {
+        // Cleanup state
+        if(selectedCells[positionKey] === false)
+            delete(selectedCells[positionKey])
+        else // Required to force cell rerender 
+            selectedCells[positionKey] = false;    
+    })
+    selectedCells[getCellPositionKey(row,col)] = true;
+    
+    setState("selectedCells", () => selectedCells);
 }
 
 export function updateViewPort(row: number, col: number): void {
@@ -68,12 +76,13 @@ export function updateViewPort(row: number, col: number): void {
 
 export function deselectCell(): void {
     EvaluateSelectedFormulas();
-    setState({ ...state,selectedCells: new SelectedCells(), mode: { markMode: true } as MarkMode});
+    setState({ ...state,selectedCells: {}, referencedCells: {}, mode: { markMode: true } as MarkMode});
 }
 
 function EvaluateSelectedFormulas() {
-    state.selectedCells.getAll().forEach(cell => {
-        EvaluateCellFormula(cell.row, cell.column);
+    Object.keys(state.selectedCells).forEach(cell => {
+        const position = getKeyCellPosition(cell);
+        EvaluateCellFormula( position.row, position.column);
     });
 }
 
